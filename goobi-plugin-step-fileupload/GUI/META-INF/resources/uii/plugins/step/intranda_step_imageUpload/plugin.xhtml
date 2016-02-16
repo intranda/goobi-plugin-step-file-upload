@@ -1,0 +1,105 @@
+<ui:composition xmlns:p="http://primefaces.org/ui" 
+                xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:ui="http://java.sun.com/jsf/facelets" 
+                xmlns:composite="http://java.sun.com/jsf/composite"
+                xmlns:h="http://java.sun.com/jsf/html" 
+                xmlns:x="http://myfaces.apache.org/tomahawk" 
+                xmlns:f="http://java.sun.com/jsf/core" 
+                intranda="http://xmlns.jcp.org/jsf/composite/composites"                
+                >
+
+    <style>
+#upload .ui-widget-header {
+    background: #fff none repeat scroll 0 0;
+}
+
+#upload .ui-fileupload-choose {
+    background: #368ee0 none repeat scroll 0 0;
+    color: #fff;
+    text-shadow: none;
+    border: 0 none;
+    padding: 0.3em 1em;
+    font-weight: 400;
+}
+
+#upload .ui-fileupload-buttonbar span.ui-button .ui-button-text {
+    padding: 0.3em 1em;
+}
+
+#upload .ui-fileupload-buttonbar span.ui-button span.ui-button-icon-left {
+    display: none;
+}
+
+#upload .ui-fileupload-files {
+    width: 100%;
+}
+
+#upload .ui-fileupload-files td:first-child {
+    display: none;
+}
+</style>
+
+    <h:form prependId="false" enctype="multipart/form-data">
+        <div class="box box-color lightgrey box-bordered">
+
+            <div class="box-title">
+                <h3>
+                    <i class="fa fa-upload"></i>
+                    <h:outputText value="#{msgs.files}" />
+                </h3>
+
+
+                <ul class="tabs">
+                    <li class="#{NavigationForm.uiStatus.image_upload ne 'tab2'?'active':''}">
+                        <h:commandLink action="#{NavigationForm.Reload}" value="#{msgs.plugin_imageUpload}">
+                            <f:setPropertyActionListener target="#{NavigationForm.uiStatus.image_upload}" value="" />
+                            <f:ajax render="@form" execute="@form" />
+                        </h:commandLink>
+                    </li>
+                    <li class="#{NavigationForm.uiStatus.image_upload eq 'tab2'?'active':''}">
+                        <h:commandLink action="#{NavigationForm.Reload}" value="#{msgs.overview}">
+                            <f:setPropertyActionListener target="#{NavigationForm.uiStatus.image_upload}" value="tab2" />
+                            <f:ajax render="@form" execute="@form" />
+                        </h:commandLink>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="box-content nopadding">
+             	<h:panelGroup rendered="#{NavigationForm.uiStatus.image_upload ne 'tab2'}">
+                    <p:fileUpload   fileUploadListener="#{AktuelleSchritteForm.myPlugin.handleFileUpload}" 
+                                    id="upload" 
+                                    auto="true" 
+                                    multiple="true" 
+                                    dragDropSupport="true" 
+                                    label="#{msgs.selectFiles}" 
+                                    allowTypes="/(\.|\/)(gif|jpe?g|png|tiff?|jp2)$/" />
+                </h:panelGroup>
+                <h:panelGroup rendered="#{NavigationForm.uiStatus.image_upload eq 'tab2'}">
+                    <table class="table table-bordered">
+
+                        <x:dataList var="file" value="#{AktuelleSchritteForm.myPlugin.uploadedFiles}" styleClass="table table-bordered">
+                            <tr>
+                                <td>
+                                    <h:outputText value="#{file}" title="#{file}" />
+                                </td>
+                                <td>
+                                    <!--  delete button -->
+                                    <h:commandLink action="#{AktuelleSchritteForm.myPlugin.deleteFile}" title="#{msgs.deleteFile}">
+                                        <i class="btn fa fa-trash-o" style="margin-left: 3px" />
+                                        <x:updateActionListener property="#{AktuelleSchritteForm.myPlugin.currentFile}" value="#{file}" />
+                                    </h:commandLink>
+                                </td>
+                            </tr>
+                        </x:dataList>
+                    </table>
+                </h:panelGroup>
+            </div>
+        </div>
+        
+        
+                 
+    
+        
+    </h:form>
+</ui:composition>
