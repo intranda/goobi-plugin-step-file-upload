@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -46,7 +47,7 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
             if (!Files.exists(folder)) {
                 Files.createDirectory(folder);
             }
-            uploadedFiles = NIOFileUtils.list(folder.toString());
+            loadUploadedFiles();
 
         } catch (SwapException | DAOException | IOException | InterruptedException e) {
             log.error(e);
@@ -54,6 +55,11 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
 
     }
 
+    private void loadUploadedFiles(){
+        uploadedFiles = NIOFileUtils.list(folder.toString());
+        Collections.sort(uploadedFiles);
+    }
+    
     @Override
     public boolean execute() {
         return false;
@@ -96,14 +102,18 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
     }
 
     public void deleteFile() {
-        // remove from list
-        if (uploadedFiles.contains(currentFile)) {
-            uploadedFiles.remove(currentFile);
-        }
         // delete file
         File f = new File(folder.toString(), currentFile);
         FileUtils.deleteQuietly(f);
-
+        loadUploadedFiles();
+    }
+    
+    public void deleteAllFiles(){
+        for (String file : uploadedFiles) {
+            File f = new File(folder.toString(), file);
+            FileUtils.deleteQuietly(f);
+        }
+        loadUploadedFiles();
     }
 
     public void handleFileUpload(FileUploadEvent event) {
@@ -113,7 +123,8 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
         } catch (IOException e) {
             log.error(e);
         }
-        uploadedFiles.add(event.getFile().getFileName());
+        
+        loadUploadedFiles();
     }
 
     public void copyFile(String fileName, InputStream in) {
