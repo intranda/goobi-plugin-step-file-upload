@@ -20,6 +20,7 @@ import org.goobi.production.plugin.interfaces.IPlugin;
 import org.goobi.production.plugin.interfaces.IStepPlugin;
 import org.primefaces.event.FileUploadEvent;
 
+import de.sub.goobi.config.ConfigPlugins;
 import de.sub.goobi.helper.NIOFileUtils;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
@@ -35,6 +36,8 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
     private String masterFolder;
     private Path folder;
 
+    private String allowedTypes;
+    
     private String currentFile = null;
     private List<String> uploadedFiles = new ArrayList<String>();
 
@@ -44,6 +47,8 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
         try {
             masterFolder = myStep.getProzess().getImagesOrigDirectory(false);
             folder = Paths.get(masterFolder);
+            
+            allowedTypes = ConfigPlugins.getPluginConfig(this).getString("regex", "/(\\.|\\/)(gif|jpe?g|png|tiff?|jp2|pdf)$/");
             if (!Files.exists(folder)) {
                 Files.createDirectory(folder);
             }
@@ -101,6 +106,10 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
         this.currentFile = currentFile;
     }
 
+    public String getAllowedTypes() {
+        return allowedTypes;
+    }
+    
     public void deleteFile() {
         // delete file
         File f = new File(folder.toString(), currentFile);
