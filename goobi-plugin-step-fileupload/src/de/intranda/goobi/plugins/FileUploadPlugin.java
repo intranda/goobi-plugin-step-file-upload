@@ -1,6 +1,8 @@
 package de.intranda.goobi.plugins;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,8 +11,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 
 import org.apache.commons.io.FileUtils;
 import org.goobi.beans.Step;
@@ -21,6 +27,7 @@ import org.goobi.production.plugin.interfaces.IStepPlugin;
 import org.primefaces.event.FileUploadEvent;
 
 import de.sub.goobi.config.ConfigPlugins;
+import de.sub.goobi.helper.FacesContextHelper;
 import de.sub.goobi.helper.NIOFileUtils;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
@@ -37,7 +44,7 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
     private Path folder;
 
     private String allowedTypes;
-    
+
     private String currentFile = null;
     private List<String> uploadedFiles = new ArrayList<String>();
 
@@ -47,7 +54,7 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
         try {
             masterFolder = myStep.getProzess().getImagesOrigDirectory(false);
             folder = Paths.get(masterFolder);
-            
+
             allowedTypes = ConfigPlugins.getPluginConfig(this).getString("regex", "/(\\.|\\/)(gif|jpe?g|png|tiff?|jp2|pdf)$/");
             if (!Files.exists(folder)) {
                 Files.createDirectory(folder);
@@ -60,11 +67,10 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
 
     }
 
-    private void loadUploadedFiles(){
+    private void loadUploadedFiles() {
         uploadedFiles = NIOFileUtils.list(folder.toString());
-        Collections.sort(uploadedFiles);
     }
-    
+
     @Override
     public boolean execute() {
         return false;
@@ -109,15 +115,15 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
     public String getAllowedTypes() {
         return allowedTypes;
     }
-    
+
     public void deleteFile() {
         // delete file
         File f = new File(folder.toString(), currentFile);
         FileUtils.deleteQuietly(f);
         loadUploadedFiles();
     }
-    
-    public void deleteAllFiles(){
+
+    public void deleteAllFiles() {
         for (String file : uploadedFiles) {
             File f = new File(folder.toString(), file);
             FileUtils.deleteQuietly(f);
@@ -132,7 +138,7 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
         } catch (IOException e) {
             log.error(e);
         }
-        
+
         loadUploadedFiles();
     }
 
@@ -172,4 +178,63 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
         }
 
     }
+
+    public void downloadAllImages() {
+
+        BufferedInputStream buf = null;
+
+        try {
+            Path tempfile = Files.createTempFile(myStep.getProzess().getTitel(), ".zip");
+
+            ZipOutputStream out = new ZipOutputStream(new FileOutputStream(tempfile.toFile()));
+
+            for (String file : uploadedFiles) {
+
+                Path currentImagePath = Paths.get(folder.toString(), file);
+                FileInputStream in = new FileInputStream(currentImagePath.toFile());
+                out.putNextEntry(new ZipEntry(file));
+                byte[] b = new byte[1024];
+                int count;
+
+                while ((count = in.read(b)) > 0) {
+                    out.write(b, 0, count);
+                }
+                in.close();
+
+            }
+            out.close();
+
+            FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
+            ExternalContext ec = facesContext.getExternalContext();
+            ec.responseReset();
+            ec.setResponseContentType("application/zip");
+            ec.setResponseContentLength((int) Files.size(tempfile));
+
+            ec.setResponseHeader("Content-Disposition", "attachment; filename=" + myStep.getProzess().getTitel() + ".zip");
+            OutputStream responseOutputStream = ec.getResponseOutputStream();
+
+            FileInputStream input = new FileInputStream(tempfile.toString());
+            buf = new BufferedInputStream(input);
+            int readBytes = 0;
+
+            //read from the file; write to the ServletOutputStream
+            while ((readBytes = buf.read()) != -1) {
+                responseOutputStream.write(readBytes);
+            }
+            responseOutputStream.flush();
+            responseOutputStream.close();
+            facesContext.responseComplete();
+        } catch (IOException e) {
+            log.error(e);
+        } finally {
+            if (buf != null) {
+                try {
+                    buf.close();
+                } catch (IOException e) {
+                    log.error(e);
+                }
+            }
+        }
+    }
+
 }
