@@ -18,6 +18,10 @@ import java.util.zip.ZipOutputStream;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
+import org.apache.commons.configuration.SubnodeConfiguration;
+import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
+import org.apache.commons.configuration.tree.xpath.XPathExpressionEngine;
 import org.apache.commons.io.FileUtils;
 import org.goobi.beans.Step;
 import org.goobi.production.enums.PluginGuiType;
@@ -40,8 +44,8 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
 
     private static final String PLUGIN_NAME = "intranda_step_fileUpload";
 
-    private String masterFolder;
-    private Path folder;
+    private String folder;
+    private Path path;
 
     private String allowedTypes;
 
@@ -49,26 +53,55 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
     private List<String> uploadedFiles = new ArrayList<String>();
 
     public void initialize(Step step, String returnPath) {
-        super.returnPath = returnPath;
-        super.myStep = step;
-        try {
-            masterFolder = myStep.getProzess().getImagesOrigDirectory(false);
-            folder = Paths.get(masterFolder);
+		super.returnPath = returnPath;
+		super.myStep = step;
+		String projectName = step.getProzess().getProjekt().getTitel();
+		XMLConfiguration xmlConfig = ConfigPlugins.getPluginConfig(this);
+		xmlConfig.setExpressionEngine(new XPathExpressionEngine());
+		xmlConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
 
-            allowedTypes = ConfigPlugins.getPluginConfig(this).getString("regex", "/(\\.|\\/)(gif|jpe?g|png|tiff?|jp2|pdf)$/");
-            if (!Files.exists(folder)) {
-                Files.createDirectory(folder);
-            }
-            loadUploadedFiles();
+		SubnodeConfiguration myconfig = null;
 
-        } catch (SwapException | DAOException | IOException | InterruptedException e) {
-            log.error(e);
-        }
+		// order of configuration is:
+		// 1.) project name and step name matches
+		// 2.) step name matches and project is *
+		// 3.) project name matches and step name is *
+		// 4.) project name and step name are *
+		try {
+			myconfig = xmlConfig
+					.configurationAt("//config[./project = '" + projectName + "'][./step = '" + step.getTitel() + "']");
+		} catch (IllegalArgumentException e) {
+			try {
+				myconfig = xmlConfig.configurationAt("//config[./project = '*'][./step = '" + step.getTitel() + "']");
+			} catch (IllegalArgumentException e1) {
+				try {
+					myconfig = xmlConfig.configurationAt("//config[./project = '" + projectName + "'][./step = '*']");
+				} catch (IllegalArgumentException e2) {
+					myconfig = xmlConfig.configurationAt("//config[./project = '*'][./step = '*']");
+				}
+			}
+		}
+
+		allowedTypes = myconfig.getString("regex", "/(\\.|\\/)(gif|jpe?g|png|tiff?|jp2|pdf)$/");
+		try {
+			if (myconfig.getString("folder", "master").equals("master")) {
+				folder = myStep.getProzess().getImagesOrigDirectory(false);
+			} else {
+				folder = myStep.getProzess().getImagesTifDirectory(false);
+			}
+			path = Paths.get(folder);
+			if (!Files.exists(path)) {
+				Files.createDirectory(path);
+			}
+			loadUploadedFiles();
+		} catch (SwapException | DAOException | IOException | InterruptedException e) {
+			log.error(e);
+		}
 
     }
 
     private void loadUploadedFiles() {
-        uploadedFiles = NIOFileUtils.list(folder.toString());
+        uploadedFiles = NIOFileUtils.list(path.toString());
     }
 
     @Override
@@ -118,14 +151,14 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
 
     public void deleteFile() {
         // delete file
-        File f = new File(folder.toString(), currentFile);
+        File f = new File(path.toString(), currentFile);
         FileUtils.deleteQuietly(f);
         loadUploadedFiles();
     }
 
     public void deleteAllFiles() {
         for (String file : uploadedFiles) {
-            File f = new File(folder.toString(), file);
+            File f = new File(path.toString(), file);
             FileUtils.deleteQuietly(f);
         }
         loadUploadedFiles();
@@ -148,7 +181,7 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
         try {
 
             // write the inputStream to a FileOutputStream
-            out = new FileOutputStream(new File(masterFolder, fileName));
+            out = new FileOutputStream(new File(folder, fileName));
 
             int read = 0;
             byte[] bytes = new byte[1024];
@@ -190,7 +223,7 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
 
             for (String file : uploadedFiles) {
 
-                Path currentImagePath = Paths.get(folder.toString(), file);
+                Path currentImagePath = Paths.get(path.toString(), file);
                 FileInputStream in = new FileInputStream(currentImagePath.toFile());
                 out.putNextEntry(new ZipEntry(file));
                 byte[] b = new byte[1024];
