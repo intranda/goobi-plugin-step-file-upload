@@ -1,7 +1,7 @@
 <config_plugin>
 
 	<config>
-		<!-- which projects to use for (can be more then one, otherwise use *) -->
+		<!-- which projects to use for (can be more than one, otherwise use *) -->
 		<project>*</project>
 		<step>*</step>
 		<!-- which file types to allow -->
@@ -11,7 +11,7 @@
 	</config>
 
 	<config>
-		<!-- which projects to use for (can be more then one, otherwise use *) -->
+		<!-- which projects to use for (can be more than one, otherwise use *) -->
 		<project>My special project</project>
 		<project>Archive_Project</project>
 		<step>Upload derivatives</step>
