@@ -56,7 +56,7 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
 		super.returnPath = returnPath;
 		super.myStep = step;
 		String projectName = step.getProzess().getProjekt().getTitel();
-		XMLConfiguration xmlConfig = ConfigPlugins.getPluginConfig(this);
+		XMLConfiguration xmlConfig = ConfigPlugins.getPluginConfig(PLUGIN_NAME);
 		xmlConfig.setExpressionEngine(new XPathExpressionEngine());
 		xmlConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
 
