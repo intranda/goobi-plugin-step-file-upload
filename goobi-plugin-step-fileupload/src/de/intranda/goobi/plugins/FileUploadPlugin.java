@@ -1,7 +1,6 @@
 package de.intranda.goobi.plugins;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -22,7 +21,6 @@ import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.configuration.tree.xpath.XPathExpressionEngine;
-import org.apache.commons.io.FileUtils;
 import org.goobi.beans.Step;
 import org.goobi.production.enums.PluginGuiType;
 import org.goobi.production.plugin.interfaces.AbstractStepPlugin;
@@ -32,11 +30,11 @@ import org.primefaces.event.FileUploadEvent;
 
 import de.sub.goobi.config.ConfigPlugins;
 import de.sub.goobi.helper.FacesContextHelper;
-import de.sub.goobi.helper.NIOFileUtils;
+import de.sub.goobi.helper.StorageProvider;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
-import net.xeoh.plugins.base.annotations.PluginImplementation;
 import lombok.extern.log4j.Log4j;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 @PluginImplementation
 @Log4j
@@ -52,56 +50,57 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
     private String currentFile = null;
     private List<String> uploadedFiles = new ArrayList<String>();
 
+    @Override
     public void initialize(Step step, String returnPath) {
-		super.returnPath = returnPath;
-		super.myStep = step;
-		String projectName = step.getProzess().getProjekt().getTitel();
-		XMLConfiguration xmlConfig = ConfigPlugins.getPluginConfig(PLUGIN_NAME);
-		xmlConfig.setExpressionEngine(new XPathExpressionEngine());
-		xmlConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
+        super.returnPath = returnPath;
+        super.myStep = step;
+        String projectName = step.getProzess().getProjekt().getTitel();
+        XMLConfiguration xmlConfig = ConfigPlugins.getPluginConfig(PLUGIN_NAME);
+        xmlConfig.setExpressionEngine(new XPathExpressionEngine());
+        xmlConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
 
-		SubnodeConfiguration myconfig = null;
+        SubnodeConfiguration myconfig = null;
 
-		// order of configuration is:
-		// 1.) project name and step name matches
-		// 2.) step name matches and project is *
-		// 3.) project name matches and step name is *
-		// 4.) project name and step name are *
-		try {
-			myconfig = xmlConfig
-					.configurationAt("//config[./project = '" + projectName + "'][./step = '" + step.getTitel() + "']");
-		} catch (IllegalArgumentException e) {
-			try {
-				myconfig = xmlConfig.configurationAt("//config[./project = '*'][./step = '" + step.getTitel() + "']");
-			} catch (IllegalArgumentException e1) {
-				try {
-					myconfig = xmlConfig.configurationAt("//config[./project = '" + projectName + "'][./step = '*']");
-				} catch (IllegalArgumentException e2) {
-					myconfig = xmlConfig.configurationAt("//config[./project = '*'][./step = '*']");
-				}
-			}
-		}
+        // order of configuration is:
+        // 1.) project name and step name matches
+        // 2.) step name matches and project is *
+        // 3.) project name matches and step name is *
+        // 4.) project name and step name are *
+        try {
+            myconfig = xmlConfig
+                    .configurationAt("//config[./project = '" + projectName + "'][./step = '" + step.getTitel() + "']");
+        } catch (IllegalArgumentException e) {
+            try {
+                myconfig = xmlConfig.configurationAt("//config[./project = '*'][./step = '" + step.getTitel() + "']");
+            } catch (IllegalArgumentException e1) {
+                try {
+                    myconfig = xmlConfig.configurationAt("//config[./project = '" + projectName + "'][./step = '*']");
+                } catch (IllegalArgumentException e2) {
+                    myconfig = xmlConfig.configurationAt("//config[./project = '*'][./step = '*']");
+                }
+            }
+        }
 
-		allowedTypes = myconfig.getString("regex", "/(\\.|\\/)(gif|jpe?g|png|tiff?|jp2|pdf)$/");
-		try {
-			if (myconfig.getString("folder", "master").equals("master")) {
-				folder = myStep.getProzess().getImagesOrigDirectory(false);
-			} else {
-				folder = myStep.getProzess().getImagesTifDirectory(false);
-			}
-			path = Paths.get(folder);
-			if (!Files.exists(path)) {
-				Files.createDirectory(path);
-			}
-			loadUploadedFiles();
-		} catch (SwapException | DAOException | IOException | InterruptedException e) {
-			log.error(e);
-		}
+        allowedTypes = myconfig.getString("regex", "/(\\.|\\/)(gif|jpe?g|png|tiff?|jp2|pdf)$/");
+        try {
+            if (myconfig.getString("folder", "master").equals("master")) {
+                folder = myStep.getProzess().getImagesOrigDirectory(false);
+            } else {
+                folder = myStep.getProzess().getImagesTifDirectory(false);
+            }
+            path = Paths.get(folder);
+            if (!StorageProvider.getInstance().isFileExists(path)) {
+                StorageProvider.getInstance().createDirectories(path);
+            }
+            loadUploadedFiles();
+        } catch (SwapException | DAOException | IOException | InterruptedException e) {
+            log.error(e);
+        }
 
     }
 
     private void loadUploadedFiles() {
-        uploadedFiles = NIOFileUtils.list(path.toString());
+        uploadedFiles = StorageProvider.getInstance().list(path.toString());
     }
 
     @Override
@@ -151,15 +150,23 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
 
     public void deleteFile() {
         // delete file
-        File f = new File(path.toString(), currentFile);
-        FileUtils.deleteQuietly(f);
+        Path f = Paths.get(path.toString(), currentFile);
+        try {
+            StorageProvider.getInstance().deleteFile(f);
+        } catch (IOException e) {
+            log.error(e);
+        }
         loadUploadedFiles();
     }
 
     public void deleteAllFiles() {
         for (String file : uploadedFiles) {
-            File f = new File(path.toString(), file);
-            FileUtils.deleteQuietly(f);
+            Path f = Paths.get(path.toString(), file);
+            try {
+                StorageProvider.getInstance().deleteFile(f);
+            } catch (IOException e) {
+                log.error(e);
+            }
         }
         loadUploadedFiles();
     }
@@ -176,33 +183,18 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
     }
 
     public void copyFile(String fileName, InputStream in) {
-        OutputStream out = null;
 
         try {
 
-            // write the inputStream to a FileOutputStream
-            out = new FileOutputStream(new File(folder, fileName));
+            // write the inputStream to destination file
+            StorageProvider.getInstance().uploadFile(in, Paths.get(folder, fileName));
 
-            int read = 0;
-            byte[] bytes = new byte[1024];
-
-            while ((read = in.read(bytes)) != -1) {
-                out.write(bytes, 0, read);
-            }
-            out.flush();
         } catch (IOException e) {
             log.error(e);
         } finally {
             if (in != null) {
                 try {
                     in.close();
-                } catch (IOException e) {
-                    log.error(e);
-                }
-            }
-            if (out != null) {
-                try {
-                    out.close();
                 } catch (IOException e) {
                     log.error(e);
                 }
@@ -224,7 +216,7 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
             for (String file : uploadedFiles) {
 
                 Path currentImagePath = Paths.get(path.toString(), file);
-                FileInputStream in = new FileInputStream(currentImagePath.toFile());
+                InputStream in = StorageProvider.getInstance().newInputStream(currentImagePath);
                 out.putNextEntry(new ZipEntry(file));
                 byte[] b = new byte[1024];
                 int count;
