@@ -32,11 +32,12 @@ import org.primefaces.event.FileUploadEvent;
 
 import de.sub.goobi.config.ConfigPlugins;
 import de.sub.goobi.helper.FacesContextHelper;
+import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.NIOFileUtils;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
-import net.xeoh.plugins.base.annotations.PluginImplementation;
 import lombok.extern.log4j.Log4j;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 @PluginImplementation
 @Log4j
@@ -50,58 +51,63 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
     private String allowedTypes;
 
     private String currentFile = null;
-    private List<String> uploadedFiles = new ArrayList<String>();
+    private List<String> uploadedFiles = new ArrayList<>();
 
+    @Override
     public void initialize(Step step, String returnPath) {
-		super.returnPath = returnPath;
-		super.myStep = step;
-		String projectName = step.getProzess().getProjekt().getTitel();
-		XMLConfiguration xmlConfig = ConfigPlugins.getPluginConfig(PLUGIN_NAME);
-		xmlConfig.setExpressionEngine(new XPathExpressionEngine());
-		xmlConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
+        super.returnPath = returnPath;
+        super.myStep = step;
+        String projectName = step.getProzess().getProjekt().getTitel();
+        XMLConfiguration xmlConfig = ConfigPlugins.getPluginConfig(PLUGIN_NAME);
+        xmlConfig.setExpressionEngine(new XPathExpressionEngine());
+        xmlConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
 
-		SubnodeConfiguration myconfig = null;
+        SubnodeConfiguration myconfig = null;
 
-		// order of configuration is:
-		// 1.) project name and step name matches
-		// 2.) step name matches and project is *
-		// 3.) project name matches and step name is *
-		// 4.) project name and step name are *
-		try {
-			myconfig = xmlConfig
-					.configurationAt("//config[./project = '" + projectName + "'][./step = '" + step.getTitel() + "']");
-		} catch (IllegalArgumentException e) {
-			try {
-				myconfig = xmlConfig.configurationAt("//config[./project = '*'][./step = '" + step.getTitel() + "']");
-			} catch (IllegalArgumentException e1) {
-				try {
-					myconfig = xmlConfig.configurationAt("//config[./project = '" + projectName + "'][./step = '*']");
-				} catch (IllegalArgumentException e2) {
-					myconfig = xmlConfig.configurationAt("//config[./project = '*'][./step = '*']");
-				}
-			}
-		}
+        // order of configuration is:
+        // 1.) project name and step name matches
+        // 2.) step name matches and project is *
+        // 3.) project name matches and step name is *
+        // 4.) project name and step name are *
+        try {
+            myconfig = xmlConfig
+                    .configurationAt("//config[./project = '" + projectName + "'][./step = '" + step.getTitel() + "']");
+        } catch (IllegalArgumentException e) {
+            try {
+                myconfig = xmlConfig.configurationAt("//config[./project = '*'][./step = '" + step.getTitel() + "']");
+            } catch (IllegalArgumentException e1) {
+                try {
+                    myconfig = xmlConfig.configurationAt("//config[./project = '" + projectName + "'][./step = '*']");
+                } catch (IllegalArgumentException e2) {
+                    myconfig = xmlConfig.configurationAt("//config[./project = '*'][./step = '*']");
+                }
+            }
+        }
 
-		allowedTypes = myconfig.getString("regex", "/(\\.|\\/)(gif|jpe?g|png|tiff?|jp2|pdf)$/");
-		try {
-			if (myconfig.getString("folder", "master").equals("master")) {
-				folder = myStep.getProzess().getImagesOrigDirectory(false);
-			} else {
-				folder = myStep.getProzess().getImagesTifDirectory(false);
-			}
-			path = Paths.get(folder);
-			if (!Files.exists(path)) {
-				Files.createDirectory(path);
-			}
-			loadUploadedFiles();
-		} catch (SwapException | DAOException | IOException | InterruptedException e) {
-			log.error(e);
-		}
+        allowedTypes = myconfig.getString("regex", "/(\\.|\\/)(gif|jpe?g|png|tiff?|jp2|pdf)$/");
+        try {
+            if (myconfig.getString("folder", "master").equals("master")) {
+                folder = myStep.getProzess().getImagesOrigDirectory(false);
+            } else {
+                folder = myStep.getProzess().getImagesTifDirectory(false);
+            }
+            path = Paths.get(folder);
+            if (!Files.exists(path)) {
+                Files.createDirectory(path);
+            }
+            loadUploadedFiles();
+        } catch (SwapException | DAOException | IOException | InterruptedException e) {
+            log.error(e);
+        }
 
     }
 
     private void loadUploadedFiles() {
-        uploadedFiles = NIOFileUtils.list(path.toString());
+        if (!Files.exists(path)) {
+            Helper.setFehlerMeldung("couldNotCreateImageFolder");
+        } else {
+            uploadedFiles = NIOFileUtils.list(path.toString());
+        }
     }
 
     @Override
