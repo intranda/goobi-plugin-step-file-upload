@@ -96,7 +96,7 @@
                    	<!--  number of files -->
                     <div class="row">
                     	<div class="col-sm-6">
-	                    	<h:outputText styleClass="margin-left-10 margin-top-10 font-light" value="#{AktuelleSchritteForm.myPlugin.uploadedFiles.size()} #{msgs.files}"/>
+	                    	<h:outputText styleClass="margin-left-10 margin-top-10 font-light" value="#{AktuelleSchritteForm.myPlugin.uploadedFiles.size()} #{msgs.files} (#{AktuelleSchritteForm.myPlugin.directorySize})"/>
                     	</div>
                     	<div class="col-sm-6">
 	                    	<!--  delete all button -->
@@ -115,6 +115,9 @@
                             <tr>
                                 <td style="#{fn:split((index ) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}">
                                     <h:outputText value="#{file}" title="#{file}" />
+                                </td>
+                                <td style="#{fn:split((index ) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}">
+                                    <h:outputText value="#{AktuelleSchritteForm.myPlugin.getFileSize(file)}" title="#{AktuelleSchritteForm.myPlugin.getFileSize(file)}" />
                                 </td>
                                 <td style="#{fn:split((index ) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}">
                                     <!--  delete button -->

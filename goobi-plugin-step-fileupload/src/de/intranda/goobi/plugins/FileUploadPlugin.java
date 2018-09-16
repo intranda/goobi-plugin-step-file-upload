@@ -30,6 +30,7 @@ import org.primefaces.event.FileUploadEvent;
 
 import de.sub.goobi.config.ConfigPlugins;
 import de.sub.goobi.helper.FacesContextHelper;
+import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.StorageProvider;
 import de.sub.goobi.helper.exceptions.DAOException;
@@ -145,6 +146,40 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
         return currentFile;
     }
 
+    /**
+     * get the size of a file that is listed inside of the configured directory
+     * 
+     * @param file name of the file to get the size of
+     * @return size as String in MB, GB or TB
+     */
+    public String getFileSize(String file) {
+    	String result = "-";
+    	Path f = Paths.get(path.toString(), file);
+    	try {
+    		long size = StorageProvider.getInstance().getFileSize(f);
+    		result = FilesystemHelper.getFileSizeShort(size);
+        } catch (IOException e) {
+            log.error(e);
+        }
+    	return result;
+    }
+    
+    /**
+     * get the size of the configured directory
+     * 
+     * @return size as String in MB, GB or TB
+     */
+    public String getDirectorySize() {
+    	String result = "-";
+    	try {
+    		long size = StorageProvider.getInstance().getDirectorySize(path);
+    		result = FilesystemHelper.getFileSizeShort(size);
+        } catch (IOException e) {
+            log.error(e);
+        }
+    	return result;
+    }
+    
     public void setCurrentFile(String currentFile) {
         this.currentFile = currentFile;
     }
