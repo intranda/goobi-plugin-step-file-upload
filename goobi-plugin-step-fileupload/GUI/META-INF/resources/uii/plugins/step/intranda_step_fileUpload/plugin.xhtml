@@ -73,14 +73,18 @@
 
             <div class="box-content nopadding">
              	<h:panelGroup rendered="#{NavigationForm.uiStatus.image_upload ne 'tab2'}" styleClass="padding-all-more">
-	                <p:fileUpload fileUploadListener="#{AktuelleSchritteForm.myPlugin.handleFileUpload}" 
-	                      id="upload" 
-	                      auto="true"
-	                      style="text-align:center;"
-	                      multiple="true" 
-	                      dragDropSupport="true" 
-	                      label="#{msgs.selectFiles}" 
-	                      allowTypes="#{AktuelleSchritteForm.myPlugin.allowedTypes}" />
+	                
+	                <p:fileUpload 
+	                	fileUploadListener="#{AktuelleSchritteForm.myPlugin.handleFileUpload}" 
+	                    id="upload" 
+	                    auto="true"
+	                    style="text-align:center;"
+	                    multiple="true" 
+	                    dragDropSupport="true" 
+	                    label="#{msgs.selectFiles}"
+	                    sizeLimit="1000000000000" 
+	                    allowTypes="#{AktuelleSchritteForm.myPlugin.allowedTypes}" />
+	               			                                	
                 </h:panelGroup>
                 <h:panelGroup rendered="#{NavigationForm.uiStatus.image_upload eq 'tab2'}">
                    
