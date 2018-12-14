@@ -1,23 +1,23 @@
 package de.intranda.goobi.plugins;
 
 /**
-* This file is part of a plugin for Goobi - a Workflow tool for the support of mass digitization.
-* 
-* Visit the websites for more information. 
-*          - https://goobi.io
-*          - https://www.intranda.com
-*          - https://github.com/intranda/goobi
-* 
-* This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
-* Software Foundation; either version 2 of the License, or (at your option) any later version.
-* 
-* This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-* FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-* 
-* You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
-* Temple Place, Suite 330, Boston, MA 02111-1307 USA
-* 
-**/
+ * This file is part of a plugin for Goobi - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information.
+ *          - https://goobi.io
+ *          - https://www.intranda.com
+ *          - https://github.com/intranda/goobi
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ **/
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -49,7 +49,6 @@ import org.primefaces.event.FileUploadEvent;
 import de.sub.goobi.config.ConfigPlugins;
 import de.sub.goobi.helper.FacesContextHelper;
 import de.sub.goobi.helper.FilesystemHelper;
-import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.StorageProvider;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
@@ -120,11 +119,11 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
     }
 
     private void loadUploadedFiles() {
-        if (!StorageProvider.getInstance().isFileExists(path)) {
-            Helper.setFehlerMeldung("couldNotCreateImageFolder");
-        } else {
-            uploadedFiles = StorageProvider.getInstance().list(path.toString());
-        }
+        //        if (!StorageProvider.getInstance().isFileExists(path)) {
+        //            Helper.setFehlerMeldung("couldNotCreateImageFolder");
+        //        } else {
+        uploadedFiles = StorageProvider.getInstance().list(path.toString());
+        //        }
     }
 
     @Override
