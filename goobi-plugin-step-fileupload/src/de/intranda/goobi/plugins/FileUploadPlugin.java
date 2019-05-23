@@ -1,29 +1,7 @@
 package de.intranda.goobi.plugins;
 
-/**
- * This file is part of a plugin for Goobi - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information.
- *          - https://goobi.io
- *          - https://www.intranda.com
- *          - https://github.com/intranda/goobi
- * 
- * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
- * Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
- **/
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -216,6 +194,24 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
         loadUploadedFiles();
     }
 
+    public void downloadFile() {
+        Path f = Paths.get(path.toString(), currentFile);
+        try {
+            FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
+            ExternalContext ec = facesContext.getExternalContext();
+            ec.responseReset();
+            //            ec.setResponseContentType("image/zip");
+            ec.setResponseHeader("Content-Disposition", "attachment; filename=" + f.getFileName().toString());
+            ec.setResponseContentLength((int) StorageProvider.getInstance().getFileSize(f));
+
+            Files.copy(f, ec.getResponseOutputStream());
+
+            facesContext.responseComplete();
+        } catch (IOException e) {
+            log.error(e);
+        }
+    }
+
     public void deleteAllFiles() {
         for (String file : uploadedFiles) {
             Path f = Paths.get(path.toString(), file);
@@ -263,59 +259,34 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
 
     public void downloadAllImages() {
 
-        BufferedInputStream buf = null;
-
         try {
-            Path tempfile = Files.createTempFile(myStep.getProzess().getTitel(), ".zip");
-
-            ZipOutputStream out = new ZipOutputStream(new FileOutputStream(tempfile.toFile()));
-
-            for (String file : uploadedFiles) {
-
-                Path currentImagePath = Paths.get(path.toString(), file);
-                InputStream in = StorageProvider.getInstance().newInputStream(currentImagePath);
-                out.putNextEntry(new ZipEntry(file));
-                byte[] b = new byte[1024];
-                int count;
-
-                while ((count = in.read(b)) > 0) {
-                    out.write(b, 0, count);
-                }
-                in.close();
-
-            }
-            out.close();
-
             FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
             ExternalContext ec = facesContext.getExternalContext();
             ec.responseReset();
             ec.setResponseContentType("application/zip");
-            ec.setResponseContentLength((int) Files.size(tempfile));
-
             ec.setResponseHeader("Content-Disposition", "attachment; filename=" + myStep.getProzess().getTitel() + ".zip");
-            OutputStream responseOutputStream = ec.getResponseOutputStream();
 
-            FileInputStream input = new FileInputStream(tempfile.toString());
-            buf = new BufferedInputStream(input);
-            int readBytes = 0;
+            try (ZipOutputStream out = new ZipOutputStream(ec.getResponseOutputStream())) {
 
-            //read from the file; write to the ServletOutputStream
-            while ((readBytes = buf.read()) != -1) {
-                responseOutputStream.write(readBytes);
+                for (String file : uploadedFiles) {
+
+                    Path currentImagePath = Paths.get(path.toString(), file);
+                    InputStream in = StorageProvider.getInstance().newInputStream(currentImagePath);
+                    out.putNextEntry(new ZipEntry(file));
+                    byte[] b = new byte[1024];
+                    int count;
+
+                    while ((count = in.read(b)) > 0) {
+                        out.write(b, 0, count);
+                    }
+                    in.close();
+
+                }
             }
-            responseOutputStream.flush();
-            responseOutputStream.close();
+
             facesContext.responseComplete();
         } catch (IOException e) {
             log.error(e);
-        } finally {
-            if (buf != null) {
-                try {
-                    buf.close();
-                } catch (IOException e) {
-                    log.error(e);
-                }
-            }
         }
     }
 
