@@ -144,7 +144,7 @@
                                 <td style="#{fn:split((index ) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}">
                                     <h:outputText value="#{AktuelleSchritteForm.myPlugin.getFileSize(file)}" title="#{AktuelleSchritteForm.myPlugin.getFileSize(file)}" />
                                 </td>
-                                <td style="#{fn:split((index ) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}">
+                                <td style="#{fn:split((index ) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}; width:85px;">
                                  	<!--  download button -->
                                     <h:commandLink action="#{AktuelleSchritteForm.myPlugin.downloadFile}" title="#{msgs.downloadFile}">
                                         <i class="btn fa fa-download" style="margin-left: 3px" />
