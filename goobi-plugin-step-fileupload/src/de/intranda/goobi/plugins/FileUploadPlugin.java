@@ -30,6 +30,7 @@ import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.StorageProvider;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
@@ -39,6 +40,8 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
 
     private static final String PLUGIN_NAME = "intranda_step_fileUpload";
 
+    @Getter
+    private String configFolder;
     private String folder;
     private Path path;
 
@@ -64,8 +67,7 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
         // 3.) project name matches and step name is *
         // 4.) project name and step name are *
         try {
-            myconfig = xmlConfig
-                    .configurationAt("//config[./project = '" + projectName + "'][./step = '" + step.getTitel() + "']");
+            myconfig = xmlConfig.configurationAt("//config[./project = '" + projectName + "'][./step = '" + step.getTitel() + "']");
         } catch (IllegalArgumentException e) {
             try {
                 myconfig = xmlConfig.configurationAt("//config[./project = '*'][./step = '" + step.getTitel() + "']");
@@ -80,7 +82,8 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
 
         allowedTypes = myconfig.getString("regex", "/(\\.|\\/)(gif|jpe?g|png|tiff?|jp2|pdf)$/");
         try {
-            if (myconfig.getString("folder", "master").equals("master")) {
+            configFolder = myconfig.getString("folder", "master");
+            if (configFolder.equals("master")) {
                 folder = myStep.getProzess().getImagesOrigDirectory(false);
             } else {
                 folder = myStep.getProzess().getImagesTifDirectory(false);

@@ -29,41 +29,49 @@
 
     <style>
 
-#upload .ui-widget-content {
-	border: none;
+#uploader {
+	min-height: 150px;
+	display: ms-flexbox;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
-#upload .ui-widget-header {
-    background: #fff none repeat scroll 0 0;
+#uploader label:hover, #uploader input:hover {
+	cursor: pointer;
 }
 
-#upload .ui-fileupload-choose {
-    background: #368ee0 none repeat scroll 0 0;
-    color: #fff;
-    text-shadow: none;
-    border: 0 none;
-    padding: 0.3em 1em;
-    font-weight: 400;
+ul.uploadfiles {
+	padding: 0;
+	width: 100%;
 }
 
-#upload .ui-fileupload-buttonbar span.ui-button .ui-button-text {
-    padding: 0.3em 1em;
+.uploadfiles li {
+	list-style: none;
+	margin: 0 0 20px 0;
 }
 
-#upload .ui-fileupload-buttonbar span.ui-button span.ui-button-icon-left {
-    display: none;
+.uploadfiles .uploadfile {
+	padding: 0 10px;
+	display: ms-flexbox;
+	display: flex;
+	align-items: center;
 }
 
-#upload .ui-fileupload-files {
-    width: 100%;
+.uploadfiles .uploadfile .progress {
+	flex: 1;
+	margin: 0 20px;
+	background-color: #f5f5f5;
 }
 
-#upload .ui-fileupload-files td:first-child {
-    display: none;
+.uploadfiles .uploadfile .progress .progress-bar {
+	height: 100%;
+	margin: 0;
+	transition: width .2s ease;
 }
 
-#upload .ui-fileupload-preview{
-	display: none;
+.uploadfiles .uploadfile .name {
+	flex-basis: 150px;
 }
 
 </style>
@@ -88,7 +96,7 @@
                     <li class="#{NavigationForm.uiStatus.image_upload eq 'tab2'?'active':''}">
                         <h:commandLink action="#{NavigationForm.Reload}" value="#{msgs.overview}">
                             <f:setPropertyActionListener target="#{NavigationForm.uiStatus.image_upload}" value="tab2" />
-                            <f:ajax render="@form" execute="@form" />
+                            <f:ajax render="@form" execute="@form"  />
                         </h:commandLink>
                     </li>
                 </ul>
@@ -97,7 +105,7 @@
             <div class="box-content nopadding">
              	<h:panelGroup rendered="#{NavigationForm.uiStatus.image_upload ne 'tab2'}" styleClass="padding-all-more">
 	                
-	                <p:fileUpload 
+	                <!-- <p:fileUpload 
 	                	fileUploadListener="#{AktuelleSchritteForm.myPlugin.handleFileUpload}" 
 	                    id="upload" 
 	                    auto="true"
@@ -107,8 +115,9 @@
 	                    label="#{msgs.selectFiles}"
 	                    sizeLimit="1000000000000" 
 	                    sequential="true"
-	                    allowTypes="#{AktuelleSchritteForm.myPlugin.allowedTypes}" />
+	                    allowTypes="#{AktuelleSchritteForm.myPlugin.allowedTypes}" /> -->
 	               			                                	
+	                <div id="uploader"></div>
                 </h:panelGroup>
                 <h:panelGroup rendered="#{NavigationForm.uiStatus.image_upload eq 'tab2'}">
                    
@@ -163,9 +172,24 @@
             </div>
         </div>
         
-        
-                 
     
-        
+		<script src="plugins/step/#{AktuelleSchritteForm.myPlugin.title}/js/uploader.js"></script>
+        <script>
+			var pluginTitle = "#{AktuelleSchritteForm.myPlugin.title}";
+			var options = {
+			        stepId: #{AktuelleSchritteForm.myPlugin.step.id},
+			        processId: #{AktuelleSchritteForm.myPlugin.step.prozess.id},
+			        userId: #{LoginForm.myBenutzer.id},
+			        folder: "#{AktuelleSchritteForm.myPlugin.configFolder}",
+			        language: "#{SpracheForm.locale.language}"
+			};
+		    mountUploader(
+		        document.getElementById("uploader"),
+		        { 
+		            plugin_name: pluginTitle,
+		            goobi_opts: options
+		        }
+		    );
+		</script>
     </h:form>
 </ui:composition>
