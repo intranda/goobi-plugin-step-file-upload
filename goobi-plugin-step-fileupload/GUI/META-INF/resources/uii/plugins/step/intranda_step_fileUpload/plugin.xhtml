@@ -29,7 +29,7 @@
 
     <style>
 
-#uploader {
+.uploader {
 	min-height: 150px;
 	display: ms-flexbox;
 	display: flex;
@@ -37,7 +37,7 @@
 	align-items: center;
 }
 
-#uploader label:hover, #uploader input:hover {
+.uploader label:hover, .uploader input:hover {
 	cursor: pointer;
 }
 
@@ -88,13 +88,13 @@ ul.uploadfiles {
 
                 <ul class="tabs">
                     <li class="#{NavigationForm.uiStatus.image_upload ne 'tab2'?'active':''}">
-                        <h:commandLink action="#{NavigationForm.Reload}" value="#{msgs.plugin_imageUpload}">
+                        <h:commandLink action="#{NavigationForm.Reload}" value="#{msgs.plugin_imageUpload}" onclick="">
                             <f:setPropertyActionListener target="#{NavigationForm.uiStatus.image_upload}" value="" />
                             <f:ajax render="@form" execute="@form" />
                         </h:commandLink>
                     </li>
                     <li class="#{NavigationForm.uiStatus.image_upload eq 'tab2'?'active':''}">
-                        <h:commandLink action="#{NavigationForm.Reload}" value="#{msgs.overview}">
+                        <h:commandLink action="#{AktuelleSchritteForm.myPlugin.loadUploadedFiles}" value="#{msgs.overview}" onclick="unmountUploader()">
                             <f:setPropertyActionListener target="#{NavigationForm.uiStatus.image_upload}" value="tab2" />
                             <f:ajax render="@form" execute="@form"  />
                         </h:commandLink>
@@ -181,15 +181,19 @@ ul.uploadfiles {
 			        processId: #{AktuelleSchritteForm.myPlugin.step.prozess.id},
 			        userId: #{LoginForm.myBenutzer.id},
 			        folder: "#{AktuelleSchritteForm.myPlugin.configFolder}",
-			        language: "#{SpracheForm.locale.language}"
+			        language: "#{SpracheForm.locale.language}",
+			        acceptRegex: #{AktuelleSchritteForm.myPlugin.allowedTypes}
 			};
-		    mountUploader(
+		    window.uploader = mountUploader(
 		        document.getElementById("uploader"),
 		        { 
 		            plugin_name: pluginTitle,
 		            goobi_opts: options
 		        }
 		    );
+		    function unmountUploader() {
+		        window.uploader.unmount();
+		    }
 		</script>
     </h:form>
 </ui:composition>

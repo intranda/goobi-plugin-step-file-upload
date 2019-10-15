@@ -43,6 +43,7 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
     @Getter
     private String configFolder;
     private String folder;
+    private long size;
     private Path path;
 
     private String allowedTypes;
@@ -99,11 +100,16 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
 
     }
 
-    private void loadUploadedFiles() {
+    public void loadUploadedFiles() {
         //        if (!StorageProvider.getInstance().isFileExists(path)) {
         //            Helper.setFehlerMeldung("couldNotCreateImageFolder");
         //        } else {
-        uploadedFiles = StorageProvider.getInstance().list(path.toString());
+        this.uploadedFiles = StorageProvider.getInstance().list(path.toString());
+        try {
+            this.size = StorageProvider.getInstance().getDirectorySize(path);
+        } catch (IOException e) {
+            log.error(e);
+        }
         //        }
     }
 
@@ -168,14 +174,7 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
      * @return size as String in MB, GB or TB
      */
     public String getDirectorySize() {
-        String result = "-";
-        try {
-            long size = StorageProvider.getInstance().getDirectorySize(path);
-            result = FilesystemHelper.getFileSizeShort(size);
-        } catch (IOException e) {
-            log.error(e);
-        }
-        return result;
+        return FilesystemHelper.getFileSizeShort(size);
     }
 
     public void setCurrentFile(String currentFile) {
