@@ -2,7 +2,6 @@ package de.intranda.goobi.plugins;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -17,6 +16,7 @@ import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.configuration.tree.xpath.XPathExpressionEngine;
+import org.apache.commons.io.IOUtils;
 import org.goobi.beans.Step;
 import org.goobi.production.enums.PluginGuiType;
 import org.goobi.production.plugin.interfaces.AbstractStepPlugin;
@@ -198,7 +198,7 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
 
     public void downloadFile() {
         Path f = Paths.get(path.toString(), currentFile);
-        try {
+        try (InputStream in = StorageProvider.getInstance().newInputStream(f)) {
             FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
             ExternalContext ec = facesContext.getExternalContext();
             ec.responseReset();
@@ -206,7 +206,7 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
             ec.setResponseHeader("Content-Disposition", "attachment; filename=" + f.getFileName().toString());
             ec.setResponseContentLength((int) StorageProvider.getInstance().getFileSize(f));
 
-            Files.copy(f, ec.getResponseOutputStream());
+            IOUtils.copy(in, ec.getResponseOutputStream());
 
             facesContext.responseComplete();
         } catch (IOException e) {
