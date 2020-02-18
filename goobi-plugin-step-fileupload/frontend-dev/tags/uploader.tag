@@ -38,7 +38,10 @@
       	  uploading: false,
       	  errorFiles: []
       };
-      fetch(`/goobi/api/messages/${props.goobi_opts.language}`).then(resp => {
+      fetch(`/goobi/api/messages/${props.goobi_opts.language}`, {
+          method: 'GET',
+          credentials: 'same-origin'
+      }).then(resp => {
         resp.json().then(json => {
           this.state.msgs = json;
           this.update();
