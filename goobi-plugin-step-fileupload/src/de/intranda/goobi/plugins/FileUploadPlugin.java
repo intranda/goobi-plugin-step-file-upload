@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -31,6 +32,7 @@ import de.sub.goobi.helper.StorageProvider;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
@@ -40,7 +42,7 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
 
     private static final String PLUGIN_NAME = "intranda_step_fileUpload";
 
-    @Getter
+    @Getter @Setter
     private String configFolder;
     private String folder;
     private long size;
@@ -50,6 +52,8 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
 
     private String currentFile = null;
     private List<String> uploadedFiles = new ArrayList<>();
+    @Getter
+    private List<String> allowedFolder = null;
 
     @Override
     public void initialize(Step step, String returnPath) {
@@ -82,8 +86,13 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
         }
 
         allowedTypes = myconfig.getString("regex", "/(\\.|\\/)(gif|jpe?g|png|tiff?|jp2|pdf)$/");
+        allowedFolder = Arrays.asList(myconfig.getStringArray("folder"));
+        configFolder =allowedFolder.get(0);
+        changeFolder();
+    }
+
+    public void changeFolder() {
         try {
-            configFolder = myconfig.getString("folder", "master");
             folder = myStep.getProzess().getConfiguredImageFolder(configFolder);
             path = Paths.get(folder);
             if (!StorageProvider.getInstance().isFileExists(path)) {

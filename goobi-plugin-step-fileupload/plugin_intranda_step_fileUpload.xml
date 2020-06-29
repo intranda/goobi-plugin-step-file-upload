@@ -35,8 +35,9 @@
 		<step>Upload derivatives</step>
 		<!-- which file types to allow -->
 		<regex>/(\.|\/)(gif|jpe?g|png|tiff?|jp2|pdf)$/</regex>
-		<!-- which folder to use (master or media) -->
+		<!-- which folder to use, repeat this field to display a dropdown -->
 		<folder>media</folder>
+        <folder>master</folder>
 	</config>
 
 </config_plugin>
