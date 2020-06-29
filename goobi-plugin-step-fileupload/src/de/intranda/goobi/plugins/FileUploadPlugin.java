@@ -84,11 +84,7 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
         allowedTypes = myconfig.getString("regex", "/(\\.|\\/)(gif|jpe?g|png|tiff?|jp2|pdf)$/");
         try {
             configFolder = myconfig.getString("folder", "master");
-            if (configFolder.equals("master")) {
-                folder = myStep.getProzess().getImagesOrigDirectory(false);
-            } else {
-                folder = myStep.getProzess().getImagesTifDirectory(false);
-            }
+            folder = myStep.getProzess().getConfiguredImageFolder(configFolder);
             path = Paths.get(folder);
             if (!StorageProvider.getInstance().isFileExists(path)) {
                 StorageProvider.getInstance().createDirectories(path);

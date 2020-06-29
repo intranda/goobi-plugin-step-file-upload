@@ -182,7 +182,7 @@ ul.uploadfiles {
 			        userId: #{LoginForm.myBenutzer.id},
 			        folder: "#{AktuelleSchritteForm.myPlugin.configFolder}",
 			        language: "#{SpracheForm.locale.language}",
-			        acceptRegex: #{AktuelleSchritteForm.myPlugin.allowedTypes}
+			        acceptRegex: .*jpg
 			};
 		    window.uploader = mountUploader(
 		        document.getElementById("uploader"),
