@@ -25,7 +25,7 @@
                 xmlns:f="http://java.sun.com/jsf/core" 
                 intranda="http://xmlns.jcp.org/jsf/composite/composites" 
                 xmlns:fn="http://java.sun.com/jsp/jstl/functions"       
-                >
+                xmlns:intranda="http://xmlns.jcp.org/jsf/composite/composites">
 
     <style>
 
@@ -103,8 +103,8 @@ ul.uploadfiles {
             </div>
 
             <div class="box-content nopadding">
-             	<h:panelGroup rendered="#{NavigationForm.uiStatus.image_upload ne 'tab2'}" styleClass="padding-all-more">
-	                
+             	<h:panelGroup rendered="#{NavigationForm.uiStatus.image_upload ne 'tab2'}" styleClass="padding-all-more" id="uploadArea">
+	             
 	                <!-- <p:fileUpload 
 	                	fileUploadListener="#{AktuelleSchritteForm.myPlugin.handleFileUpload}" 
 	                    id="upload" 
@@ -116,8 +116,50 @@ ul.uploadfiles {
 	                    sizeLimit="1000000000000" 
 	                    sequential="true"
 	                    allowTypes="#{AktuelleSchritteForm.myPlugin.allowedTypes}" /> -->
-	               			                                	
-	                <div id="uploader"></div>
+
+                    <div id="uploader"></div>
+
+                    <h:panelGroup
+                        id="folder-selection"
+                        rendered="#{AktuelleSchritteForm.myPlugin.allowedFolder.size() gt 1}">
+
+                        <div class="form-group">
+                            <div class="col-sm-3 control-label">
+                                <h:outputLabel
+                                    for="folder"
+                                    value="#{msgs.plugin_fileUpload_selectFolder}" />
+                            </div>
+                            <div class="col-sm-6">
+
+                                <h:selectOneMenu
+                                    id="folder"
+                                    styleClass="form-control"
+                                    value="#{AktuelleSchritteForm.myPlugin.configFolder}">
+                                    <f:selectItem
+                                        itemValue=""
+                                        itemLabel="#{msgs.bitteAuswaehlen}"
+                                        itemDisabled="true" />
+                                    <f:selectItems
+                                        value="#{AktuelleSchritteForm.myPlugin.allowedFolder}"
+                                        var="item"
+                                        itemLabel="#{item}"
+                                        itemValue="#{item}" />
+                                </h:selectOneMenu>
+                            </div>
+                            <div class="col-sm-3">
+                                <h:commandLink
+                                    styleClass="btn btn-blue pull-right font-size-s"
+                                    id="absenden"
+                                    action="#{AktuelleSchritteForm.myPlugin.changeFolder}">
+                                    <i class="fa fa-folder-open-o margin-right-5"></i>
+                                    <h:outputText value="#{msgs.plugin_fileUpload_changeFolder}" />
+                                </h:commandLink>
+                            </div>
+                        </div>
+
+
+                    </h:panelGroup>
+
                 </h:panelGroup>
                 <h:panelGroup rendered="#{NavigationForm.uiStatus.image_upload eq 'tab2'}">
                    
@@ -182,7 +224,7 @@ ul.uploadfiles {
 			        userId: #{LoginForm.myBenutzer.id},
 			        folder: "#{AktuelleSchritteForm.myPlugin.configFolder}",
 			        language: "#{SpracheForm.locale.language}",
-			        acceptRegex: #{AktuelleSchritteForm.myPlugin.allowedTypes}
+			         acceptRegex: #{AktuelleSchritteForm.myPlugin.allowedTypes}
 			};
 		    window.uploader = mountUploader(
 		        document.getElementById("uploader"),
