@@ -2,7 +2,7 @@
 	<div class="uploader">
 		<label class="btn btn-blue btn-file" if={state.uploadFiles.length == 0} ondragover={allowDrop} ondrop={onDrop}>
 			{msg('selectFiles')}
-	  		<input alt="file upload input" onchange={uploadFiles} type="file" multiple="multiple">
+	  		<input id="fileInput" alt="file upload input" onchange={uploadFiles} type="file" multiple="multiple">
 	  	</label>
 	  	<ul class="uploadfiles" if={state.uploadFiles.length > 0}>
 	  		<li each={(file, idx) in state.uploadFiles}>

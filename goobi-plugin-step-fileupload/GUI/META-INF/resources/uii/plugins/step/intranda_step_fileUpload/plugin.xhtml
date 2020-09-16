@@ -88,13 +88,13 @@ ul.uploadfiles {
 
                 <ul class="tabs">
                     <li class="#{NavigationForm.uiStatus.image_upload ne 'tab2'?'active':''}">
-                        <h:commandLink action="#{NavigationForm.Reload}" value="#{msgs.plugin_imageUpload}" onclick="">
+                        <h:commandLink id="imageUpload" action="#{NavigationForm.Reload}" value="#{msgs.plugin_imageUpload}" onclick="">
                             <f:setPropertyActionListener target="#{NavigationForm.uiStatus.image_upload}" value="" />
                             <f:ajax render="@form" execute="@form" />
                         </h:commandLink>
                     </li>
                     <li class="#{NavigationForm.uiStatus.image_upload eq 'tab2'?'active':''}">
-                        <h:commandLink action="#{AktuelleSchritteForm.myPlugin.loadUploadedFiles}" value="#{msgs.overview}" onclick="unmountUploader()">
+                        <h:commandLink id="overview" action="#{AktuelleSchritteForm.myPlugin.loadUploadedFiles}" value="#{msgs.overview}" onclick="unmountUploader()">
                             <f:setPropertyActionListener target="#{NavigationForm.uiStatus.image_upload}" value="tab2" />
                             <f:ajax render="@form" execute="@form"  />
                         </h:commandLink>
@@ -189,7 +189,7 @@ ul.uploadfiles {
 
                         <x:dataList var="file" value="#{AktuelleSchritteForm.myPlugin.uploadedFiles}" styleClass="table table-bordered" rowCountVar="count" rowIndexVar="index">
                             <tr>
-                                <td style="#{fn:split((index ) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}">
+                                <td id="fileName_#{index}" style="#{fn:split((index ) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}">
                                     <h:outputText value="#{file}" title="#{file}" />
                                 </td>
                                 <td style="#{fn:split((index ) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}">
@@ -203,7 +203,7 @@ ul.uploadfiles {
                                     </h:commandLink>
                                     <!--  delete button -->
                                     <h:commandLink action="#{AktuelleSchritteForm.myPlugin.deleteFile}" title="#{msgs.deleteFile}">
-                                        <i class="btn fa fa-trash-o" style="margin-left: 3px" />
+                                        <i id="deleteFile_#{file}" class="btn fa fa-trash-o" style="margin-left: 3px" />
                                         <x:updateActionListener property="#{AktuelleSchritteForm.myPlugin.currentFile}" value="#{file}" />
                                     </h:commandLink>
                                 </td>

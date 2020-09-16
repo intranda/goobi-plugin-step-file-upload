@@ -17,7 +17,8 @@
     "@riotjs/compiler": "^4.2.6",
     "@riotjs/webpack-loader": "^4.0.1",
     "babel-loader": "^8.0.6",
+    "filemanager-webpack-plugin": "^2.0.5",
     "webpack": "^4.34.0",
-    "filemanager-webpack-plugin": "^2.0.5"
+    "webpack-cli": "^3.3.12"
   }
 }
