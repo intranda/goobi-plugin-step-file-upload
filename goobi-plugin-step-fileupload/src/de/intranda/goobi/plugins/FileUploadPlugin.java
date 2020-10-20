@@ -23,7 +23,6 @@ import org.goobi.production.enums.PluginGuiType;
 import org.goobi.production.plugin.interfaces.AbstractStepPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 import org.goobi.production.plugin.interfaces.IStepPlugin;
-import org.primefaces.event.FileUploadEvent;
 
 import de.sub.goobi.config.ConfigPlugins;
 import de.sub.goobi.helper.FacesContextHelper;
@@ -42,7 +41,8 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
 
     private static final String PLUGIN_NAME = "intranda_step_fileUpload";
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private String configFolder;
     private String folder;
     private long size;
@@ -87,7 +87,7 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
 
         allowedTypes = myconfig.getString("regex", "/(\\.|\\/)(gif|jpe?g|png|tiff?|jp2|pdf)$/");
         allowedFolder = Arrays.asList(myconfig.getStringArray("folder"));
-        configFolder =allowedFolder.get(0);
+        configFolder = allowedFolder.get(0);
         changeFolder();
     }
 
@@ -229,39 +229,6 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
             }
         }
         loadUploadedFiles();
-    }
-
-    public void handleFileUpload(FileUploadEvent event) {
-        try {
-            copyFile(event.getFile().getFileName(), event.getFile().getInputstream());
-
-        } catch (IOException e) {
-            log.error(e);
-        }
-
-        loadUploadedFiles();
-    }
-
-    public void copyFile(String fileName, InputStream in) {
-
-        try {
-
-            // write the inputStream to destination file
-            StorageProvider.getInstance().uploadFile(in, Paths.get(folder, fileName));
-
-        } catch (IOException e) {
-            log.error(e);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    log.error(e);
-                }
-            }
-
-        }
-
     }
 
     public void downloadAllImages() {
