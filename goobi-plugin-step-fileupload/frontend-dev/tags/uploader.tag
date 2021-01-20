@@ -93,6 +93,7 @@
 	    this.state.currentUpload = fileToUpload;
 	    var formData = new FormData();
 	    formData.append("file", fileToUpload);
+	    formData.append("filename", fileToUpload.name)
 	    var xhr = new XMLHttpRequest();
 	    xhr.open("POST", `/goobi/api/processes/${this.props.goobi_opts.processId}/images/${this.props.goobi_opts.folder}`);
 	    xhr.onerror = this.errorOnCurrent.bind(this);
@@ -113,7 +114,13 @@
 	    if(e.target.status >= 400) {
 	        console.log("error detected!")
 	        var errorFile = this.state.uploadFiles.shift();
-	    	this.state.errorFiles.push({name: errorFile.name, error: "upload"});
+	        if(errorFile.numErrors && errorFile.numErrors > 2) {
+    	    	this.state.errorFiles.push({name: errorFile.name, error: "upload"});
+	        } else {
+	        	errorFile.uploaded = 0;
+	        	errorFile.numErrors = errorFile.numErrors ? errorFile.numErrors+1 : 1;
+        		this.state.uploadFiles.push(errorFile);
+        	}
 	    } else {
 	    	this.state.uploadFiles.shift();
 	    }
