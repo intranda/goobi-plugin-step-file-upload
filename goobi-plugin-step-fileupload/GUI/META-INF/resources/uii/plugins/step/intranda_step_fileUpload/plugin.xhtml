@@ -25,7 +25,8 @@
                 xmlns:f="http://java.sun.com/jsf/core" 
                 intranda="http://xmlns.jcp.org/jsf/composite/composites" 
                 xmlns:fn="http://java.sun.com/jsp/jstl/functions"       
-                xmlns:intranda="http://xmlns.jcp.org/jsf/composite/composites">
+                xmlns:intranda="http://xmlns.jcp.org/jsf/composite/composites"
+                xmlns:jsf="http://xmlns.jcp.org/jsf">
 
     <style>
 
@@ -94,7 +95,7 @@ ul.uploadfiles {
 
                 <ul class="tabs">
                     <li class="#{NavigationForm.uiStatus.image_upload ne 'tab2'?'active':''}">
-                        <h:commandLink id="imageUpload" action="#{NavigationForm.Reload}" value="#{msgs.plugin_imageUpload}" onclick="">
+                        <h:commandLink id="imageUpload" action="#{NavigationForm.Reload}" value="#{msgs.plugin_imageUpload}" onclick="" >
                             <f:setPropertyActionListener target="#{NavigationForm.uiStatus.image_upload}" value="" />
                             <f:ajax render="@form" execute="@form" />
                         </h:commandLink>
@@ -153,13 +154,13 @@ ul.uploadfiles {
                                 </h:selectOneMenu>
                             </div>
                             <div class="col-sm-3">
-                                <h:commandLink
-                                    styleClass="btn btn-blue pull-right font-size-s"
-                                    id="absenden"
-                                    action="#{AktuelleSchritteForm.myPlugin.changeFolder}">
+                                <button
+                                    class="btn btn-blue pull-right font-size-s"
+                                    jsf:id="absenden"
+                                    jsf:action="#{AktuelleSchritteForm.myPlugin.changeFolder}">
                                     <i class="fa fa-folder-open-o margin-right-5"></i>
                                     <h:outputText value="#{msgs.plugin_fileUpload_changeFolder}" />
-                                </h:commandLink>
+                                </button>
                             </div>
                         </div>
 
@@ -176,18 +177,18 @@ ul.uploadfiles {
                     	</div>
                     	<div class="col-sm-6">
 	                    	<!--  delete all button -->
-	                    	<h:commandLink styleClass="btn btn-danger font-size-s pull-right margin-right-5 margin-top-5 margin-bottom-5" title="#{msgs.deleteAllFiles}"
+	                    	<button class="btn btn-danger font-size-s pull-right margin-right-5 margin-top-5 margin-bottom-5" title="#{msgs.deleteAllFiles}"
 								onclick="if (!confirm('#{msgs.wirklichAusfuehren}')) return false"
-								action="#{AktuelleSchritteForm.myPlugin.deleteAllFiles}" >
+								jsf:action="#{AktuelleSchritteForm.myPlugin.deleteAllFiles}" >
 								<i class="fa fa-trash-o margin-right-5"></i>
 								<h:outputText value="#{msgs.deleteAllFiles}" />
-							</h:commandLink>
+							</button>
                     		<!--  download all button -->
-	                    	<h:commandLink styleClass="btn btn-primary font-size-s pull-right margin-right-5 margin-top-5 margin-bottom-5" title="#{msgs.downloadAllFiles}"
-								action="#{AktuelleSchritteForm.myPlugin.downloadAllImages}" >
+	                    	<button class="btn btn-primary font-size-s pull-right margin-right-5 margin-top-5 margin-bottom-5" title="#{msgs.downloadAllFiles}"
+								jsf:action="#{AktuelleSchritteForm.myPlugin.downloadAllImages}" >
 								<i class="fa fa-download margin-right-5"></i>
 								<h:outputText value="#{msgs.downloadAllFiles}" />
-							</h:commandLink>
+							</button>
                     	</div>
                     </div>
                    
@@ -203,15 +204,15 @@ ul.uploadfiles {
                                 </td>
                                 <td style="#{fn:split((index ) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}; width:85px;">
                                  	<!--  download button -->
-                                    <h:commandLink action="#{AktuelleSchritteForm.myPlugin.downloadFile}" title="#{msgs.downloadFile}">
+                                    <button jsf:action="#{AktuelleSchritteForm.myPlugin.downloadFile}" class="button-no-style" title="#{msgs.downloadFile}">
                                         <i class="btn fa fa-download" style="margin-left: 3px" />
                                         <x:updateActionListener property="#{AktuelleSchritteForm.myPlugin.currentFile}" value="#{file}" />
-                                    </h:commandLink>
+                                    </button>
                                     <!--  delete button -->
-                                    <h:commandLink action="#{AktuelleSchritteForm.myPlugin.deleteFile}" title="#{msgs.deleteFile}">
+                                    <button jsf:action="#{AktuelleSchritteForm.myPlugin.deleteFile}" class="button-no-style" title="#{msgs.deleteFile}">
                                         <i id="deleteFile_#{file}" class="btn fa fa-trash-o" style="margin-left: 3px" />
                                         <x:updateActionListener property="#{AktuelleSchritteForm.myPlugin.currentFile}" value="#{file}" />
-                                    </h:commandLink>
+                                    </button>
                                 </td>
                             </tr>
                         </x:dataList>
