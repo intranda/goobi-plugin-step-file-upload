@@ -38,7 +38,9 @@
       	  uploading: false,
       	  errorFiles: []
       };
-      fetch(`/goobi/api/messages/${props.goobi_opts.language}`, {
+      var path = window.location.pathname;
+      path = path.substring(0, path.indexOf("/uii/"));
+      fetch(`${path}/api/messages/${props.goobi_opts.language}`, {
           method: 'GET',
           credentials: 'same-origin'
       }).then(resp => {
@@ -95,7 +97,9 @@
 	    formData.append("file", fileToUpload);
 	    formData.append("filename", fileToUpload.name)
 	    var xhr = new XMLHttpRequest();
-	    xhr.open("POST", `/goobi/api/processes/${this.props.goobi_opts.processId}/images/${this.props.goobi_opts.folder}`);
+	    var path = window.location.pathname;
+        path = path.substring(0, path.indexOf("/uii/"));
+	    xhr.open("POST", `${path}/api/processes/${this.props.goobi_opts.processId}/images/${this.props.goobi_opts.folder}`);
 	    xhr.onerror = this.errorOnCurrent.bind(this);
 	    xhr.onreadystatechange = function() {
 	        console.log(xhr.readystate);
