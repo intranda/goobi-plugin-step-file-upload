@@ -32,11 +32,11 @@ import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 @PluginImplementation
-@Log4j
+@Log4j2
 public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin, IPlugin {
 
     private static final String PLUGIN_NAME = "intranda_step_fileUpload";
