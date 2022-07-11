@@ -44,7 +44,6 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
     @Getter
     @Setter
     private String configFolder;
-    private String folder;
     private long size;
     private Path path;
 
@@ -93,7 +92,7 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
 
     public void changeFolder() {
         try {
-            folder = myStep.getProzess().getConfiguredImageFolder(configFolder);
+            String folder = myStep.getProzess().getConfiguredImageFolder(configFolder);
             path = Paths.get(folder);
             if (!StorageProvider.getInstance().isFileExists(path)) {
                 StorageProvider.getInstance().createDirectories(path);
@@ -106,16 +105,12 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
     }
 
     public void loadUploadedFiles() {
-        //        if (!StorageProvider.getInstance().isFileExists(path)) {
-        //            Helper.setFehlerMeldung("couldNotCreateImageFolder");
-        //        } else {
         this.uploadedFiles = StorageProvider.getInstance().list(path.toString());
         try {
             this.size = StorageProvider.getInstance().getDirectorySize(path);
         } catch (IOException e) {
             log.error(e);
         }
-        //        }
     }
 
     @Override
@@ -140,7 +135,7 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
 
     @Override
     public String getDescription() {
-        return PLUGIN_NAME;
+        return getTitle();
     }
 
     public void setUploadedFiles(List<String> uploadedFiles) {
@@ -165,8 +160,8 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
         String result = "-";
         Path f = Paths.get(path.toString(), file);
         try {
-            long size = StorageProvider.getInstance().getFileSize(f);
-            result = FilesystemHelper.getFileSizeShort(size);
+            long fileSize = StorageProvider.getInstance().getFileSize(f);
+            result = FilesystemHelper.getFileSizeShort(fileSize);
         } catch (IOException e) {
             log.error(e);
         }
@@ -207,7 +202,6 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
             FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
             ExternalContext ec = facesContext.getExternalContext();
             ec.responseReset();
-            //            ec.setResponseContentType("image/zip");
             ec.setResponseHeader("Content-Disposition", "attachment; filename=" + f.getFileName().toString());
             ec.setResponseContentLength((int) StorageProvider.getInstance().getFileSize(f));
 
@@ -245,16 +239,15 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
                 for (String file : uploadedFiles) {
 
                     Path currentImagePath = Paths.get(path.toString(), file);
-                    InputStream in = StorageProvider.getInstance().newInputStream(currentImagePath);
-                    out.putNextEntry(new ZipEntry(file));
-                    byte[] b = new byte[1024];
-                    int count;
+                    try (InputStream in = StorageProvider.getInstance().newInputStream(currentImagePath)) {
+                        out.putNextEntry(new ZipEntry(file));
+                        byte[] b = new byte[1024];
+                        int count;
 
-                    while ((count = in.read(b)) > 0) {
-                        out.write(b, 0, count);
+                        while ((count = in.read(b)) > 0) {
+                            out.write(b, 0, count);
+                        }
                     }
-                    in.close();
-
                 }
             }
 
