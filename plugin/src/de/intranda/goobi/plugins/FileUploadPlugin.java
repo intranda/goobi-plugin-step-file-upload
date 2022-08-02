@@ -98,7 +98,7 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
                 StorageProvider.getInstance().createDirectories(path);
             }
             loadUploadedFiles();
-        } catch (SwapException | DAOException | IOException | InterruptedException e) {
+        } catch (SwapException | DAOException | IOException  e) {
             log.error(e);
         }
 
