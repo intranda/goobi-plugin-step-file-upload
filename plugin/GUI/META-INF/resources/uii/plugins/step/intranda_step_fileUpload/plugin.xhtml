@@ -16,28 +16,28 @@
  * Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
  -->
-<ui:composition xmlns:p="http://primefaces.org/ui" 
-                xmlns="http://www.w3.org/1999/xhtml" 
-                xmlns:ui="http://java.sun.com/jsf/facelets" 
-                xmlns:composite="http://java.sun.com/jsf/composite"
-                xmlns:h="http://java.sun.com/jsf/html" 
-                xmlns:x="http://myfaces.apache.org/tomahawk" 
-                xmlns:f="http://java.sun.com/jsf/core" 
-                intranda="http://xmlns.jcp.org/jsf/composite/composites" 
-                xmlns:fn="http://java.sun.com/jsp/jstl/functions"       
-                xmlns:intranda="http://xmlns.jcp.org/jsf/composite/composites"
-                xmlns:jsf="http://xmlns.jcp.org/jsf">
+<ui:composition
+    xmlns:p="http://primefaces.org/ui"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:composite="http://java.sun.com/jsf/composite"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:x="http://myfaces.apache.org/tomahawk"
+    xmlns:f="http://java.sun.com/jsf/core"
+    intranda="http://xmlns.jcp.org/jsf/composite/composites"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+    xmlns:intranda="http://xmlns.jcp.org/jsf/composite/compositesPG"
+    xmlns:jsf="http://xmlns.jcp.org/jsf">
 
     <style>
-
 .uploader {
-	min-height: 170px;
+	/* min-height: 170px; */
 	display: ms-flexbox;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-    padding-top: 20px;
-    padding-bottom: 20px;
+	padding-top: 20px;
+	padding-bottom: 20px;
 }
 
 .uploader label:hover, .uploader input:hover {
@@ -47,7 +47,7 @@
 ul.uploadfiles {
 	padding: 0;
 	width: 100%;
-    margin-bottom: 0;
+	margin-bottom: 0;
 }
 
 .uploadfiles li {
@@ -68,62 +68,86 @@ ul.uploadfiles {
 .uploadfiles .uploadfile .progress {
 	flex: 1;
 	margin: 0 20px;
-	background-color: #f5f5f5;
+	background-color:  var(--clr-neutral-200);
+    height: 20px;
 }
 
 .uploadfiles .uploadfile .progress .progress-bar {
 	height: 100%;
 	margin: 0;
 	transition: width .2s ease;
+    background-color: var(--clr-primary-400);
 }
 
 .uploadfiles .uploadfile .name {
 	flex-basis: 150px;
 }
+.btn-file {
+  overflow: hidden;
+  position: relative;
+  vertical-align: middle;
+  min-width: 200px;
+}
 
+.btn-file > input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  transform: translate(-300px, 0) scale(4);
+  font-size: 23px;
+  height: 100%;
+  direction: ltr;
+  cursor: pointer;
+}
 </style>
 
-    <h:form prependId="false" enctype="multipart/form-data">
-        <div class="box box-color lightgrey box-bordered">
+    <h:form
+        id="uploadform"
+        prependId="false"
+        enctype="multipart/form-data">
+        <intranda:box
+            boxType="neutral"
+            boxForm="false"
+            boxPadding="false"
+            boxTitle="false">
 
-            <div class="box-title">
-                <h3>
-                    <i class="fa fa-upload"></i>
-                    <h:outputText value="#{msgs.files}" />
-                </h3>
-
-
+            <intranda:boxTitle
+                title="#{msgs.files}"
+                icon="fa-upload">
                 <ul class="tabs">
-                    <li class="#{NavigationForm.uiStatus.image_upload ne 'tab2'?'active':''}">
-                        <h:commandLink id="imageUpload" action="#{NavigationForm.Reload}" value="#{msgs.plugin_imageUpload}" onclick="" >
-                            <f:setPropertyActionListener target="#{NavigationForm.uiStatus.image_upload}" value="" />
-                            <f:ajax render="@form" execute="@form" />
-                        </h:commandLink>
-                    </li>
-                    <li class="#{NavigationForm.uiStatus.image_upload eq 'tab2'?'active':''}">
-                        <h:commandLink id="overview" action="#{AktuelleSchritteForm.myPlugin.loadUploadedFiles}" value="#{msgs.overview}" onclick="unmountUploader()">
-                            <f:setPropertyActionListener target="#{NavigationForm.uiStatus.image_upload}" value="tab2" />
-                            <f:ajax render="@form" execute="@form"  />
-                        </h:commandLink>
-                    </li>
+                    <li class="tab #{NavigationForm.uiStatus.image_upload ne 'tab2'?'active':''}"><h:commandLink
+                            id="tab1"
+                            action="{NavigationForm.Reload}"
+                            value="#{msgs.plugin_imageUpload}">
+                            <f:setPropertyActionListener
+                                target="#{NavigationForm.uiStatus.image_upload}"
+                                value="" />
+                            <f:ajax
+                                render=":uploadform"
+                                execute=":uploadform" />
+                        </h:commandLink></li>
+                    <li class="tab #{NavigationForm.uiStatus.image_upload eq 'tab2'?'active':''}"><h:commandLink
+                            id="tab2"
+                            action="#{AktuelleSchritteForm.myPlugin.loadUploadedFiles}"
+                            value="#{msgs.overview}">
+                            <f:setPropertyActionListener
+                                target="#{NavigationForm.uiStatus.image_upload}"
+                                value="tab2" />
+                            <f:ajax
+                                render=":uploadform"
+                                execute=":uploadform" />
+                        </h:commandLink></li>
                 </ul>
-            </div>
+            </intranda:boxTitle>
 
-            <div class="box-content nopadding">
-             	<h:panelGroup layout="block" rendered="#{NavigationForm.uiStatus.image_upload ne 'tab2'}" id="uploadArea">
-	             
-	                <!-- <p:fileUpload 
-	                	fileUploadListener="#{AktuelleSchritteForm.myPlugin.handleFileUpload}" 
-	                    id="upload" 
-	                    auto="true"
-	                    style="text-align:center;"
-	                    multiple="true" 
-	                    dragDropSupport="true" 
-	                    label="#{msgs.selectFiles}"
-	                    sizeLimit="1000000000000" 
-	                    sequential="true"
-	                    allowTypes="#{AktuelleSchritteForm.myPlugin.allowedTypes}" /> -->
-
+            <div class="tab-content">
+                <!-- TAB 1 -->
+                <h:panelGroup
+                    layout="block"
+                    rendered="#{NavigationForm.uiStatus.image_upload ne 'tab2'}">
                     <div id="uploader"></div>
 
                     <h:panelGroup
@@ -163,66 +187,101 @@ ul.uploadfiles {
                                 </button>
                             </div>
                         </div>
-
-
                     </h:panelGroup>
-
                 </h:panelGroup>
-                <h:panelGroup rendered="#{NavigationForm.uiStatus.image_upload eq 'tab2'}">
-                   
-                   	<!--  number of files -->
+
+                <!-- TAB 2 -->
+                <h:panelGroup
+                    layout="block"
+                    rendered="#{NavigationForm.uiStatus.image_upload eq 'tab2'}">
+
+                    <!--  number of files -->
                     <div class="row">
-                    	<div class="col-sm-6">
-	                    	<h:outputText styleClass="margin-left-10 margin-top-10 font-light" value="#{AktuelleSchritteForm.myPlugin.uploadedFiles.size()} #{msgs.files} (#{AktuelleSchritteForm.myPlugin.directorySize})"/>
-                    	</div>
-                    	<div class="col-sm-6">
-	                    	<!--  delete all button -->
-	                    	<button class="btn btn-danger font-size-s pull-right margin-right-5 margin-top-5 margin-bottom-5" title="#{msgs.deleteAllFiles}"
-								onclick="if (!confirm('#{msgs.wirklichAusfuehren}')) return false"
-								jsf:action="#{AktuelleSchritteForm.myPlugin.deleteAllFiles}" >
-								<i class="fa fa-trash-o margin-right-5"></i>
-								<h:outputText value="#{msgs.deleteAllFiles}" />
-							</button>
-                    		<!--  download all button -->
-	                    	<button class="btn btn-primary font-size-s pull-right margin-right-5 margin-top-5 margin-bottom-5" title="#{msgs.downloadAllFiles}"
-								jsf:action="#{AktuelleSchritteForm.myPlugin.downloadAllImages}" >
-								<i class="fa fa-download margin-right-5"></i>
-								<h:outputText value="#{msgs.downloadAllFiles}" />
-							</button>
-                    	</div>
+                        <div class="col-sm-6">
+                            <h:outputText
+                                styleClass="font-light"
+                                value="#{AktuelleSchritteForm.myPlugin.uploadedFiles.size()} #{msgs.files} (#{AktuelleSchritteForm.myPlugin.directorySize})" />
+                        </div>
+                        <div class="col-sm-6">
+                            <!--  delete all button -->
+                            <button
+                                class="btn btn-hot float-end ms-2"
+                                title="#{msgs.deleteAllFiles}"
+                                onclick="if (!confirm('#{msgs.wirklichAusfuehren}')) return false"
+                                jsf:action="#{AktuelleSchritteForm.myPlugin.deleteAllFiles}">
+                                <i class="fa fa-trash-o"></i>
+                                <span>
+                                    <h:outputText value="#{msgs.deleteAllFiles}" />
+                                </span>
+                            </button>
+                            <!--  download all button -->
+                            <button
+                                class="btn btn-primary float-end"
+                                title="#{msgs.downloadAllFiles}"
+                                jsf:action="#{AktuelleSchritteForm.myPlugin.downloadAllImages}">
+                                <i class="fa fa-download"></i>
+                                <span>
+                                    <h:outputText value="#{msgs.downloadAllFiles}" />
+                                </span>
+                            </button>
+                        </div>
                     </div>
-                   
+
                     <table class="table table-bordered">
 
-                        <x:dataList var="file" value="#{AktuelleSchritteForm.myPlugin.uploadedFiles}" styleClass="table table-bordered" rowCountVar="count" rowIndexVar="index">
+                        <x:dataList
+                            var="file"
+                            value="#{AktuelleSchritteForm.myPlugin.uploadedFiles}"
+                            styleClass="table table-bordered"
+                            rowCountVar="count"
+                            rowIndexVar="index">
                             <tr>
-                                <td id="fileName_#{index}" style="#{fn:split((index ) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}">
-                                    <h:outputText value="#{file}" title="#{file}" />
+                                <td
+                                    id="fileName_#{index}"
+                                    style="#{fn:split((index ) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}">
+                                    <h:outputText
+                                        value="#{file}"
+                                        title="#{file}" />
                                 </td>
-                                <td style="#{fn:split((index ) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}">
-                                    <h:outputText value="#{AktuelleSchritteForm.myPlugin.getFileSize(file)}" title="#{AktuelleSchritteForm.myPlugin.getFileSize(file)}" />
+                                <td
+                                    style="#{fn:split((index ) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}">
+                                    <h:outputText
+                                        value="#{AktuelleSchritteForm.myPlugin.getFileSize(file)}"
+                                        title="#{AktuelleSchritteForm.myPlugin.getFileSize(file)}" />
                                 </td>
-                                <td style="#{fn:split((index ) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}; width:85px;">
-                                 	<!--  download button -->
-                                    <button jsf:action="#{AktuelleSchritteForm.myPlugin.downloadFile}" class="button-no-style" title="#{msgs.downloadFile}">
-                                        <i class="btn fa fa-download" style="margin-left: 3px" />
-                                        <x:updateActionListener property="#{AktuelleSchritteForm.myPlugin.currentFile}" value="#{file}" />
+                                <td
+                                    style="#{fn:split((index ) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}; width:85px;">
+                                    <!--  download button -->
+                                    <button
+                                        jsf:action="#{AktuelleSchritteForm.myPlugin.downloadFile}"
+                                        class="btn btn-blank"
+                                        title="#{msgs.downloadFile}">
+                                        <i class="fa fa-download"/>
+                                        <x:updateActionListener
+                                            property="#{AktuelleSchritteForm.myPlugin.currentFile}"
+                                            value="#{file}" />
                                     </button>
                                     <!--  delete button -->
-                                    <button jsf:action="#{AktuelleSchritteForm.myPlugin.deleteFile}" class="button-no-style" title="#{msgs.deleteFile}">
-                                        <i id="deleteFile_#{file}" class="btn fa fa-trash-o" style="margin-left: 3px" />
-                                        <x:updateActionListener property="#{AktuelleSchritteForm.myPlugin.currentFile}" value="#{file}" />
+                                    <button
+                                        jsf:action="#{AktuelleSchritteForm.myPlugin.deleteFile}"
+                                        class="btn btn-blank ms-2"
+                                        title="#{msgs.deleteFile}">
+                                        <i id="deleteFile_#{file}"
+                                            class="fa fa-trash-o"/>
+                                        <x:updateActionListener
+                                            property="#{AktuelleSchritteForm.myPlugin.currentFile}"
+                                            value="#{file}" />
                                     </button>
                                 </td>
                             </tr>
                         </x:dataList>
                     </table>
+
                 </h:panelGroup>
             </div>
-        </div>
-        
-    
-		<script src="plugins/step/#{AktuelleSchritteForm.myPlugin.title}/js/uploader.js"></script>
+        </intranda:box>
+
+        <script src="plugins/step/#{AktuelleSchritteForm.myPlugin.title}/js/uploader.js"></script>
         <script>
 			var pluginTitle = "#{AktuelleSchritteForm.myPlugin.title}";
 			var options = {

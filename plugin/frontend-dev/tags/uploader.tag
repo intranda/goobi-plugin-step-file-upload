@@ -1,6 +1,6 @@
 <uploader>
 	<div class="uploader" ondragover={allowDrop} ondrop={onDrop}>
-		<label class="btn btn-blue btn-file" if={state.uploadFiles.length == 0}>
+		<label class="btn btn-primary-400 btn-file" if={state.uploadFiles.length == 0}>
 			{msg('selectFiles')}
 	  		<input id="fileInput" alt="file upload input" onchange={uploadFiles} type="file" multiple="multiple">
 	  	</label>
@@ -13,12 +13,12 @@
 					    <span class="sr-only">{Math.floor(100*file.uploaded/file.size)}% Complete</span>
 					  </div>
 					</div>
-	  				<span onclick={ (e) => cancel(e, idx)} class="btn"><i class="fa fa-times"></i></span>
+	  				<span onclick={ (e) => cancel(e, idx)} class="btn btn-blank"><i class="fa fa-times"></i></span>
 	  			</div>
 	  		</li>
 	  	</ul>
   	</div>
-  	<div if={state.errorFiles.length != 0} class="uploader-errors">
+  	<div if={state.errorFiles.length != 0} class="uploader-errors m-3">
 	  	<div each={errorFile in state.errorFiles} class="alert alert-danger">
 			<span if={errorFile.error == 'namevalidation'}>
 	  			{errorFile.name}: Filename is not allowed.
