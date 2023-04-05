@@ -154,17 +154,21 @@ ul.uploadfiles {
                         id="folder-selection"
                         rendered="#{AktuelleSchritteForm.myPlugin.allowedFolder.size() gt 1}">
 
-                        <div class="form-group">
-                            <div class="col-sm-3 control-label">
-                                <h:outputLabel
-                                    for="folder"
-                                    value="#{msgs.plugin_fileUpload_selectFolder}" />
+                        <!-- SELECT ROW -->
+                        <div class="row">
+                        
+                            <!-- LABEL -->
+                            <div class="col-12 col-md-2">
+                                <intranda:formLabel label="#{msgs.plugin_fileUpload_selectFolder}" 
+                                    labelFor="folder"  labelRequired="false"/>
                             </div>
-                            <div class="col-sm-6">
-
+                            <!-- // LABEL -->
+                        
+                            <!-- SELECT -->
+                            <div class="col-12 col-md-8">
                                 <h:selectOneMenu
                                     id="folder"
-                                    styleClass="form-control"
+                                    styleClass="form-select"
                                     value="#{AktuelleSchritteForm.myPlugin.configFolder}">
                                     <f:selectItem
                                         itemValue=""
@@ -176,17 +180,23 @@ ul.uploadfiles {
                                         itemLabel="#{item}"
                                         itemValue="#{item}" />
                                 </h:selectOneMenu>
-                            </div>
-                            <div class="col-sm-3">
+                              </div>
+                              <div class="col-12 col-md-2">
                                 <button
-                                    class="btn btn-blue pull-right font-size-s"
+                                    class="btn btn-blank float-end"
                                     jsf:id="absenden"
                                     jsf:action="#{AktuelleSchritteForm.myPlugin.changeFolder}">
-                                    <i class="fa fa-folder-open-o margin-right-5"></i>
-                                    <h:outputText value="#{msgs.plugin_fileUpload_changeFolder}" />
+                                    <i class="fa fa-folder-open-o"></i>
+                                    <span>
+                                        <h:outputText value="#{msgs.plugin_fileUpload_changeFolder}" />
+                                    </span>
                                 </button>
-                            </div>
+                              </div>
+                            <!-- // SELECT -->
+                        
                         </div>
+                        <!-- // SELECT ROW -->
+
                     </h:panelGroup>
                 </h:panelGroup>
 
