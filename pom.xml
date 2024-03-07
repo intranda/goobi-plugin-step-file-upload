@@ -7,7 +7,7 @@
     <relativePath />
   </parent>
   <groupId>io.goobi.workflow.plugin</groupId>
-  <artifactId>plugin-step-fileupload</artifactId>
+  <artifactId>plugin-step-file-upload</artifactId>
   <packaging>pom</packaging>
   <modules>
     <module>module-base</module>

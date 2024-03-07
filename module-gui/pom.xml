@@ -5,7 +5,7 @@
     <artifactId>plugin-step-fileupload</artifactId>
     <version>24.03-SNAPSHOT</version>
   </parent>
-  <artifactId>plugin-step-fileupload-gui</artifactId>
+  <artifactId>plugin-step-file-upload-gui</artifactId>
   <packaging>jar</packaging>
   <build>
     <resources>

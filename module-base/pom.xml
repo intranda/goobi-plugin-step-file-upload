@@ -5,6 +5,6 @@
     <artifactId>plugin-step-fileupload</artifactId>
     <version>24.03-SNAPSHOT</version>
   </parent>
-  <artifactId>plugin-step-fileupload-base</artifactId>
+  <artifactId>plugin-step-file-upload-base</artifactId>
   <packaging>jar</packaging>
 </project>
