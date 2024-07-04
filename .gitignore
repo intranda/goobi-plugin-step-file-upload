@@ -7,7 +7,7 @@
 target/
 bin/
 build/
-**/node_modules/
+node_modules/
 module-gui/src/main/webapp/resources/uii/plugins/step/intranda_step_fileUpload/js/
 
 # Eclipse
