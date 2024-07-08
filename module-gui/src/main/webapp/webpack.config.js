@@ -6,7 +6,7 @@ module.exports = {
     entry: './main.js',
     mode: "development",
     output: {
-      path: path.resolve(__dirname, '../module-gui/src/main/webapp/resources/uii/plugins/step/intranda_step_fileUpload/js/'),
+      path: path.resolve(__dirname, 'resources/dist/intranda_step_fileUpload/js/'),
       filename: 'uploader.js'
     },
     module: {
