@@ -291,7 +291,10 @@ ul.uploadfiles {
             </div>
         </intranda:box>
 
-        <script src="plugins/step/#{AktuelleSchritteForm.myPlugin.title}/js/uploader.js"></script>
+        <script
+                src="#{HelperForm.applicationWebsiteUrl}dist/#{AktuelleSchritteForm.myPlugin.title}/js/uploader.js"
+                type="text/javascript"
+        ></script>
         <script>
 			var pluginTitle = "#{AktuelleSchritteForm.myPlugin.title}";
 			var options = {
