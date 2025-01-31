@@ -10,9 +10,6 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-
 import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
@@ -30,6 +27,8 @@ import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.StorageProvider;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
+import jakarta.faces.context.ExternalContext;
+import jakarta.faces.context.FacesContext;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
@@ -39,13 +38,15 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
 @Log4j2
 public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin, IPlugin {
 
+    private static final long serialVersionUID = 1881863588326852628L;
+
     private static final String PLUGIN_NAME = "intranda_step_fileUpload";
 
     @Getter
     @Setter
     private String configFolder;
     private long size;
-    private Path path;
+    private transient Path path;
 
     private String allowedTypes;
 
@@ -98,7 +99,7 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
                 StorageProvider.getInstance().createDirectories(path);
             }
             loadUploadedFiles();
-        } catch (SwapException | DAOException | IOException  e) {
+        } catch (SwapException | DAOException | IOException e) {
             log.error(e);
         }
 
