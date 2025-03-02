@@ -22,7 +22,6 @@
     xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:composite="http://java.sun.com/jsf/composite"
     xmlns:h="http://java.sun.com/jsf/html"
-    xmlns:x="http://myfaces.apache.org/tomahawk"
     xmlns:f="http://java.sun.com/jsf/core"
     intranda="http://xmlns.jcp.org/jsf/composite/composites"
     xmlns:fn="http://java.sun.com/jsp/jstl/functions"
@@ -239,7 +238,7 @@ ul.uploadfiles {
 
                     <table class="table table-bordered">
 
-                        <x:dataList
+                        <ui:repeat
                             var="file"
                             value="#{AktuelleSchritteForm.myPlugin.uploadedFiles}"
                             styleClass="table table-bordered"
@@ -267,8 +266,8 @@ ul.uploadfiles {
                                         class="btn btn-blank"
                                         title="#{msgs.downloadFile}">
                                         <i class="fa fa-download"/>
-                                        <x:updateActionListener
-                                            property="#{AktuelleSchritteForm.myPlugin.currentFile}"
+                                        <f:setPropertyActionListener
+                                            target="#{AktuelleSchritteForm.myPlugin.currentFile}"
                                             value="#{file}" />
                                     </button>
                                     <!--  delete button -->
@@ -278,13 +277,13 @@ ul.uploadfiles {
                                         title="#{msgs.deleteFile}">
                                         <i id="deleteFile_#{file}"
                                             class="fa fa-trash-o"/>
-                                        <x:updateActionListener
-                                            property="#{AktuelleSchritteForm.myPlugin.currentFile}"
+                                        <f:setPropertyActionListener
+                                            target="#{AktuelleSchritteForm.myPlugin.currentFile}"
                                             value="#{file}" />
                                     </button>
                                 </td>
                             </tr>
-                        </x:dataList>
+                        </ui:repeat>
                     </table>
 
                 </h:panelGroup>
