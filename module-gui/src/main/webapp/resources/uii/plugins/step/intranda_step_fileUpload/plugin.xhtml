@@ -242,24 +242,23 @@ ul.uploadfiles {
                             var="file"
                             value="#{AktuelleSchritteForm.myPlugin.uploadedFiles}"
                             styleClass="table table-bordered"
-                            rowCountVar="count"
-                            rowIndexVar="index">
+                            varStatus="item">
                             <tr>
                                 <td
                                     id="fileName_#{index}"
-                                    style="#{fn:split((index ) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}">
+                                    style="#{fn:split((item.index) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}">
                                     <h:outputText
                                         value="#{file}"
                                         title="#{file}" />
                                 </td>
                                 <td
-                                    style="#{fn:split((index ) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}">
+                                    style="#{fn:split((item.index) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}">
                                     <h:outputText
                                         value="#{AktuelleSchritteForm.myPlugin.getFileSize(file)}"
                                         title="#{AktuelleSchritteForm.myPlugin.getFileSize(file)}" />
                                 </td>
                                 <td
-                                    style="#{fn:split((index ) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}; width:85px;">
+                                    style="#{fn:split((item.index) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}; width:85px;">
                                     <!--  download button -->
                                     <button
                                         jsf:action="#{AktuelleSchritteForm.myPlugin.downloadFile}"
