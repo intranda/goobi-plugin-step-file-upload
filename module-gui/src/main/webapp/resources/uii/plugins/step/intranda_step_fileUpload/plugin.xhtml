@@ -1,20 +1,20 @@
-<!-- 
+<!--
  * This file is part of a plugin for Goobi - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
+ *
+ * Visit the websites for more information.
  *          - https://goobi.io
  *          - https://www.intranda.com
  *          - https://github.com/intranda/goobi
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
  * Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  -->
 <ui:composition
     xmlns:p="http://primefaces.org/ui"
@@ -25,7 +25,7 @@
     xmlns:f="http://java.sun.com/jsf/core"
     intranda="http://xmlns.jcp.org/jsf/composite/composites"
     xmlns:fn="http://java.sun.com/jsp/jstl/functions"
-    xmlns:intranda="http://xmlns.jcp.org/jsf/composite/compositesPG"
+    xmlns:intranda="http://xmlns.jcp.org/jsf/composite/composites"
     xmlns:jsf="http://xmlns.jcp.org/jsf">
 
     <style>
@@ -155,14 +155,14 @@ ul.uploadfiles {
 
                         <!-- SELECT ROW -->
                         <div class="row">
-                        
+
                             <!-- LABEL -->
                             <div class="col-12 col-md-2">
-                                <intranda:formLabel label="#{msgs.plugin_fileUpload_selectFolder}" 
+                                <intranda:formLabel label="#{msgs.plugin_fileUpload_selectFolder}"
                                     labelFor="folder"  labelRequired="false"/>
                             </div>
                             <!-- // LABEL -->
-                        
+
                             <!-- SELECT -->
                             <div class="col-12 col-md-7">
                                 <h:selectOneMenu
@@ -192,7 +192,7 @@ ul.uploadfiles {
                                 </button>
                               </div>
                             <!-- // SELECT -->
-                        
+
                         </div>
                         <!-- // SELECT ROW -->
 
@@ -242,24 +242,23 @@ ul.uploadfiles {
                             var="file"
                             value="#{AktuelleSchritteForm.myPlugin.uploadedFiles}"
                             styleClass="table table-bordered"
-                            rowCountVar="count"
-                            rowIndexVar="index">
+                            varStatus="item">
                             <tr>
                                 <td
                                     id="fileName_#{index}"
-                                    style="#{fn:split((index ) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}">
+                                    style="#{fn:split((item.index) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}">
                                     <h:outputText
                                         value="#{file}"
                                         title="#{file}" />
                                 </td>
                                 <td
-                                    style="#{fn:split((index ) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}">
+                                    style="#{fn:split((item.index) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}">
                                     <h:outputText
                                         value="#{AktuelleSchritteForm.myPlugin.getFileSize(file)}"
                                         title="#{AktuelleSchritteForm.myPlugin.getFileSize(file)}" />
                                 </td>
                                 <td
-                                    style="#{fn:split((index ) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}; width:85px;">
+                                    style="#{fn:split((item.index) / 5, '.')[0] mod 2 == 0?'background-color: #f5f5f5;':'background-color: #fff;'}; width:85px;">
                                     <!--  download button -->
                                     <button
                                         jsf:action="#{AktuelleSchritteForm.myPlugin.downloadFile}"
@@ -308,7 +307,7 @@ ul.uploadfiles {
 			if(uploaderEl) {
     		    window.uploader = mountUploader(
     		        uploaderEl,
-    		        { 
+    		        {
     		            plugin_name: pluginTitle,
     		            goobi_opts: options
     		        }
