@@ -1,0 +1,72 @@
+.uploader {
+	/* min-height: 170px; */
+	display: ms-flexbox;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding-top: 35px;
+	padding-bottom: 35px;
+}
+
+.uploader label:hover, .uploader input:hover {
+	cursor: pointer;
+}
+
+ul.uploadfiles {
+	padding: 0;
+	width: 100%;
+	margin-bottom: 0;
+}
+
+.uploadfiles li {
+	list-style: none;
+}
+
+.uploadfiles li:not(:last-child) {
+	margin: 0 0 20px 0;
+}
+
+.uploadfiles .uploadfile {
+	padding: 0 10px;
+	display: ms-flexbox;
+	display: flex;
+	align-items: center;
+}
+
+.uploadfiles .uploadfile .progress {
+	flex: 1;
+	margin: 0 20px;
+	background-color:  var(--clr-neutral-200);
+    height: 20px;
+}
+
+.uploadfiles .uploadfile .progress .progress-bar {
+	height: 100%;
+	margin: 0;
+	transition: width .2s ease;
+    background-color: var(--clr-primary-400);
+}
+
+.uploadfiles .uploadfile .name {
+	flex-basis: 150px;
+}
+.btn-file {
+  overflow: hidden;
+  position: relative;
+  vertical-align: middle;
+  min-width: 200px;
+}
+
+.btn-file > input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  transform: translate(-300px, 0) scale(4);
+  font-size: 23px;
+  height: 100%;
+  direction: ltr;
+  cursor: pointer;
+}

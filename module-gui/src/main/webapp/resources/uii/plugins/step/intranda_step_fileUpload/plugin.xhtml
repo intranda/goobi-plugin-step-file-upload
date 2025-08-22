@@ -28,80 +28,8 @@
     xmlns:intranda="http://xmlns.jcp.org/jsf/composite/composites"
     xmlns:jsf="http://xmlns.jcp.org/jsf">
 
-    <style>
-.uploader {
-	/* min-height: 170px; */
-	display: ms-flexbox;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	padding-top: 35px;
-	padding-bottom: 35px;
-}
-
-.uploader label:hover, .uploader input:hover {
-	cursor: pointer;
-}
-
-ul.uploadfiles {
-	padding: 0;
-	width: 100%;
-	margin-bottom: 0;
-}
-
-.uploadfiles li {
-	list-style: none;
-}
-
-.uploadfiles li:not(:last-child) {
-	margin: 0 0 20px 0;
-}
-
-.uploadfiles .uploadfile {
-	padding: 0 10px;
-	display: ms-flexbox;
-	display: flex;
-	align-items: center;
-}
-
-.uploadfiles .uploadfile .progress {
-	flex: 1;
-	margin: 0 20px;
-	background-color:  var(--clr-neutral-200);
-    height: 20px;
-}
-
-.uploadfiles .uploadfile .progress .progress-bar {
-	height: 100%;
-	margin: 0;
-	transition: width .2s ease;
-    background-color: var(--clr-primary-400);
-}
-
-.uploadfiles .uploadfile .name {
-	flex-basis: 150px;
-}
-.btn-file {
-  overflow: hidden;
-  position: relative;
-  vertical-align: middle;
-  min-width: 200px;
-}
-
-.btn-file > input {
-  position: absolute;
-  top: 0;
-  right: 0;
-  margin: 0;
-  opacity: 0;
-  filter: alpha(opacity=0);
-  transform: translate(-300px, 0) scale(4);
-  font-size: 23px;
-  height: 100%;
-  direction: ltr;
-  cursor: pointer;
-}
-</style>
+    <!-- External CSS -->
+    <link rel="stylesheet" type="text/css" href="#{HelperForm.applicationWebsiteUrl}dist/#{AktuelleSchritteForm.myPlugin.title}/css/plugin.css" />
 
     <h:form
         id="uploadform"
@@ -293,29 +221,25 @@ ul.uploadfiles {
                 src="#{HelperForm.applicationWebsiteUrl}dist/#{AktuelleSchritteForm.myPlugin.title}/js/uploader.js"
                 type="text/javascript"
         ></script>
+
+        <!-- External JavaScript -->
+        <script
+                src="#{HelperForm.applicationWebsiteUrl}dist/#{AktuelleSchritteForm.myPlugin.title}/js/plugin.js"
+                type="text/javascript"
+        ></script>        <!-- Configuration Script -->
         <script>
-			var pluginTitle = "#{AktuelleSchritteForm.myPlugin.title}";
-			var options = {
-			        stepId: #{AktuelleSchritteForm.myPlugin.step.id},
-			        processId: #{AktuelleSchritteForm.myPlugin.step.prozess.id},
-			        userId: #{LoginForm.myBenutzer.id},
-			        folder: "#{AktuelleSchritteForm.myPlugin.configFolder}",
-			        language: "#{SpracheForm.locale.language}",
-			         acceptRegex: #{AktuelleSchritteForm.myPlugin.allowedTypes}
-			};
-			var uploaderEl = document.getElementById("uploader");
-			if(uploaderEl) {
-    		    window.uploader = mountUploader(
-    		        uploaderEl,
-    		        {
-    		            plugin_name: pluginTitle,
-    		            goobi_opts: options
-    		        }
-    		    );
-			}
-		    function unmountUploader() {
-		        window.uploader.unmount();
-		    }
-		</script>
+            // Set up configuration for the plugin
+            window.uploaderConfig = {
+                pluginTitle: "#{AktuelleSchritteForm.myPlugin.title}",
+                options: {
+                    stepId: #{AktuelleSchritteForm.myPlugin.step.id},
+                    processId: #{AktuelleSchritteForm.myPlugin.step.prozess.id},
+                    userId: #{LoginForm.myBenutzer.id},
+                    folder: "#{AktuelleSchritteForm.myPlugin.configFolder}",
+                    language: "#{SpracheForm.locale.language}",
+                    acceptRegex: #{AktuelleSchritteForm.myPlugin.allowedTypes}
+                }
+            };
+        </script>
     </h:form>
 </ui:composition>
