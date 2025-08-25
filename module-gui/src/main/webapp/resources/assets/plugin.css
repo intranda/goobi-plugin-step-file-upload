@@ -1,3 +1,13 @@
+/* Placeholder maintains the space in the layout for uploader positioning */
+#uploader-placeholder {
+    min-height: 120px;
+}
+
+/* Persistent uploader container positioning */
+#uploader-persistent-container {
+    box-sizing: border-box;
+}
+
 .uploader {
 	/* min-height: 170px; */
 	display: ms-flexbox;
@@ -43,7 +53,6 @@ ul.uploadfiles {
 .uploadfiles .uploadfile .progress .progress-bar {
 	height: 100%;
 	margin: 0;
-	transition: width .2s ease;
     background-color: var(--clr-primary-400);
 }
 
@@ -69,4 +78,13 @@ ul.uploadfiles {
   height: 100%;
   direction: ltr;
   cursor: pointer;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	#uploader-placeholder {
+		transition: height 0.3s ease-in-out;
+	}
+	.uploadfiles .uploadfile .progress .progress-bar {
+		transition: width .2s ease;
+	}
 }

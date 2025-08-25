@@ -28,6 +28,11 @@
     xmlns:intranda="http://xmlns.jcp.org/jsf/composite/composites"
     xmlns:jsf="http://xmlns.jcp.org/jsf">
 
+    <!-- Persistent uploader container outside AJAX updates -->
+    <div id="uploader-persistent-container" style="position: absolute; z-index: 1000; display: none;">
+        <div id="uploader"></div>
+    </div>
+
     <!-- External CSS -->
     <link rel="stylesheet" type="text/css" href="#{HelperForm.applicationWebsiteUrl}dist/#{AktuelleSchritteForm.myPlugin.title}/css/plugin.css" />
 
@@ -75,7 +80,8 @@
                 <h:panelGroup
                     layout="block"
                     rendered="#{NavigationForm.uiStatus.image_upload ne 'tab2'}">
-                    <div id="uploader"></div>
+                    <!-- Placeholder for uploader positioning -->
+                    <div id="uploader-placeholder"></div>
 
                     <h:panelGroup
                         id="folder-selection"
