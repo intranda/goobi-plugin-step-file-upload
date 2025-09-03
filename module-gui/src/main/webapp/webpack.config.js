@@ -1,5 +1,6 @@
 const path = require("path")
 const FileManagerPlugin = require('filemanager-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require("webpack")
 
 module.exports = {
@@ -34,5 +35,19 @@ module.exports = {
           }
         }
       ]
-    }
+    },
+    plugins: [
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            from: path.resolve(__dirname, 'resources/assets/plugin.js'),
+            to: path.resolve(__dirname, 'resources/dist/intranda_step_fileUpload/js/plugin.js')
+          },
+          {
+            from: path.resolve(__dirname, 'resources/assets/plugin.css'),
+            to: path.resolve(__dirname, 'resources/dist/intranda_step_fileUpload/css/plugin.css')
+          }
+        ]
+      })
+    ]
   }

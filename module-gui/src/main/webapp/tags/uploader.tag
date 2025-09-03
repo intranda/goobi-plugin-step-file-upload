@@ -51,13 +51,13 @@
       })
     },
     onMounted(props, state) {
-      
+
     },
     onBeforeUpdate(props, state) {
-      
+
     },
     onUpdated(props, state) {
-      
+
     },
     onBeforeUnmount(props, state) {
       console.log("unmounting - cancelling all uploads");
