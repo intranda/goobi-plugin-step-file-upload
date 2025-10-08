@@ -1,13 +1,3 @@
-/* Placeholder maintains the space in the layout for uploader positioning */
-#uploader-placeholder {
-    min-height: 120px;
-}
-
-/* Persistent uploader container positioning */
-#uploader-persistent-container {
-    box-sizing: border-box;
-}
-
 .uploader {
 	/* min-height: 170px; */
 	display: ms-flexbox;
