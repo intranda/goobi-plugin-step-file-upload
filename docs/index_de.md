@@ -3,6 +3,10 @@ title: Upload von Dateien
 identifier: intranda_step_fileUpload
 published: true
 description: Dieses Step Plugin erlaubt den Upload verschiedener Dateien innerhalb von Aufgaben in der Weboberfläche.
+keywords:
+    - Goobi workflow
+    - Plugin
+    - Step Plugin
 ---
 ## Einführung
 Dieses Plugin dient zum Upload von Dateien innerhalb der Nutzeroberfläche einer angenommenen Aufgabe in Goobi workflow.

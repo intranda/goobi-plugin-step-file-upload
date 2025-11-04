@@ -3,6 +3,10 @@ title: Upload files
 identifier: intranda_step_fileUpload
 published: true
 description: This step plugin allows the upload of different files within tasks in the web interface.
+keywords:
+    - Goobi workflow
+    - Plugin
+    - Step Plugin
 ---
 ## Introduction
 This plugin is used to upload files within the user interface of an accepted task in Goobi workflow.
