@@ -38,7 +38,7 @@ Nachdem das Plugin vollständig installiert und eingerichtet wurde, steht es fü
 
 Dateien können entweder per Drag & Drop in diesen Bereich hochgeladen werden oder alternativ durch einen Klick auf den Button ausgewählt und somit hochgeladen werden.
 
-Soll nach dem erfolgten Upload geprüft werden, welche Dateien in dem Ordner bereits vorhanden sind, so kann im rechten obereren Bereich die Anzeige umgeschaltet werden. Damit ist es dem Nutzer möglich, alle bereits vorhandenen Dateien in dem Ordner aufzulisten, einzelne Dateien herunterzuladen oder diese zu löschen.
+Soll nach dem erfolgten Upload geprüft werden, welche Dateien in dem Ordner bereits vorhanden sind, so kann im rechten oberen Bereich die Anzeige umgeschaltet werden. Damit ist es dem Nutzer möglich, alle bereits vorhandenen Dateien in dem Ordner aufzulisten, einzelne Dateien herunterzuladen oder diese zu löschen.
 
 ![Anzeige der Übersicht über alle bereits vorhandenen Dateien des Ordners](screen3_de.png)
 
@@ -80,4 +80,4 @@ Der Block `<config>` kann für verschiedene Projekte oder Arbeitsschritte wieder
 | `project` | Dieser Parameter legt fest, für welches Projekt der aktuelle Block `<config>` gelten soll. Verwendet wird hierbei der Name des Projektes. Dieser Parameter kann mehrfach pro `<config>` Block vorkommen. |
 | `step` | Dieser Parameter steuert, für welche Arbeitsschritte der Block `<config>` gelten soll. Verwendet wird hier der Name des Arbeitsschritts. Dieser Parameter kann mehrfach pro `<config>` Block vorkommen. |
 | `regex` | Mit diesem Parameter kann festgelegt werden, welche Dateitypen  für den Upload erlaubt sein sollen. Im oben angegebenen Beispiel sind mehrere Bildformate sowie pdf-Dateien erlaubt. |
-| `folder` | Mit diesem Parameter läßt sich definieren, wohin der Upload der Dateien erfolgen soll. Dieser Parameter kann wiederholt vorkommen und erlaubt so einen Upload in mehrere Verzeichnisse, zwischen denen der Nutzer dann auswählen kann. Mögliche Werte hierfür sind z.B. `master`, `media` oder auch individuelle Ordner wie `photos` und `scans`. |
+| `folder` | Mit diesem Parameter lässt sich definieren, wohin der Upload der Dateien erfolgen soll. Dieser Parameter kann wiederholt vorkommen und erlaubt so einen Upload in mehrere Verzeichnisse, zwischen denen der Nutzer dann auswählen kann. Mögliche Werte hierfür sind z.B. `master`, `media` oder auch individuelle Ordner wie `photos` und `scans`. |
