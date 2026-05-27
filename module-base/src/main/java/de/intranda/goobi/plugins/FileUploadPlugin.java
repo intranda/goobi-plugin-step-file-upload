@@ -2,6 +2,8 @@ package de.intranda.goobi.plugins;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -159,8 +161,8 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
      */
     public String getFileSize(String file) {
         String result = "-";
-        Path f = Paths.get(path.toString(), file);
         try {
+            Path f = resolveSafePath(path, file);
             long fileSize = StorageProvider.getInstance().getFileSize(f);
             result = FilesystemHelper.getFileSizeShort(fileSize);
         } catch (IOException e) {
@@ -186,10 +188,22 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
         return allowedTypes;
     }
 
+    static Path resolveSafePath(Path base, String filename) {
+        Path resolved = base.resolve(filename).normalize();
+        if (!resolved.startsWith(base.normalize())) {
+            throw new SecurityException("Path traversal attempt detected: " + filename);
+        }
+        return resolved;
+    }
+
+    static String buildContentDispositionHeader(String filename) {
+        String encoded = URLEncoder.encode(filename, StandardCharsets.UTF_8).replace("+", "%20");
+        return "attachment; filename*=UTF-8''" + encoded;
+    }
+
     public void deleteFile() {
-        // delete file
-        Path f = Paths.get(path.toString(), currentFile);
         try {
+            Path f = resolveSafePath(path, currentFile);
             StorageProvider.getInstance().deleteFile(f);
         } catch (IOException e) {
             log.error(e);
@@ -198,17 +212,19 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
     }
 
     public void downloadFile() {
-        Path f = Paths.get(path.toString(), currentFile);
-        try (InputStream in = StorageProvider.getInstance().newInputStream(f)) {
-            FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
-            ExternalContext ec = facesContext.getExternalContext();
-            ec.responseReset();
-            ec.setResponseHeader("Content-Disposition", "attachment; filename=" + f.getFileName().toString());
-            ec.setResponseContentLength((int) StorageProvider.getInstance().getFileSize(f));
+        try {
+            Path f = resolveSafePath(path, currentFile);
+            try (InputStream in = StorageProvider.getInstance().newInputStream(f)) {
+                FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
+                ExternalContext ec = facesContext.getExternalContext();
+                ec.responseReset();
+                ec.setResponseHeader("Content-Disposition", buildContentDispositionHeader(f.getFileName().toString()));
+                ec.setResponseContentLength((int) StorageProvider.getInstance().getFileSize(f));
 
-            IOUtils.copy(in, ec.getResponseOutputStream());
+                IOUtils.copy(in, ec.getResponseOutputStream());
 
-            facesContext.responseComplete();
+                facesContext.responseComplete();
+            }
         } catch (IOException e) {
             log.error(e);
         }
@@ -216,8 +232,8 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
 
     public void deleteAllFiles() {
         for (String file : uploadedFiles) {
-            Path f = Paths.get(path.toString(), file);
             try {
+                Path f = resolveSafePath(path, file);
                 StorageProvider.getInstance().deleteFile(f);
             } catch (IOException e) {
                 log.error(e);
@@ -233,7 +249,7 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
             ExternalContext ec = facesContext.getExternalContext();
             ec.responseReset();
             ec.setResponseContentType("application/zip");
-            ec.setResponseHeader("Content-Disposition", "attachment; filename=" + myStep.getProzess().getTitel() + ".zip");
+            ec.setResponseHeader("Content-Disposition", buildContentDispositionHeader(myStep.getProzess().getTitel() + ".zip"));
 
             try (ZipOutputStream out = new ZipOutputStream(ec.getResponseOutputStream())) {
 
