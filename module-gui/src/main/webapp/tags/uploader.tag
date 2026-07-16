@@ -13,7 +13,11 @@
 					    <span class="sr-only">{Math.floor(100*file.uploaded/file.size)}% Complete</span>
 					  </div>
 					</div>
-	  				<span onclick={ (e) => cancel(e, idx)} class="btn btn-blank"><i class="fa fa-times"></i></span>
+	  				<span onclick={ (e) => cancel(e, idx)} class="btn btn-blank">
+	  					<span class="icon-wrapper" aria-hidden="true">
+	  						<svg><use href="{GoobiIcons.iconHref('x')}" /></svg>
+	  					</span>
+	  				</span>
 	  			</div>
 	  		</li>
 	  	</ul>
