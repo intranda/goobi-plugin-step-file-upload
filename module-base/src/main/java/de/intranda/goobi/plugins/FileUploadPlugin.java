@@ -26,6 +26,7 @@ import org.goobi.production.plugin.interfaces.IStepPlugin;
 import de.sub.goobi.config.ConfigPlugins;
 import de.sub.goobi.helper.FacesContextHelper;
 import de.sub.goobi.helper.FilesystemHelper;
+import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.StorageProvider;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
@@ -96,6 +97,10 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
     public void changeFolder() {
         try {
             String folder = myStep.getProzess().getConfiguredImageFolder(configFolder);
+            if (folder == null) {
+                reportUnresolvableFolder();
+                return;
+            }
             path = Paths.get(folder);
             if (!StorageProvider.getInstance().isFileExists(path)) {
                 StorageProvider.getInstance().createDirectories(path);
@@ -107,7 +112,25 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
 
     }
 
+    /**
+     * Report a folder name that Goobi cannot resolve. getConfiguredImageFolder() returns null for every folder that is neither master, main nor media
+     * and has no matching process.folder.images entry in goobi_config.properties. Without this guard the null reaches Paths.get() and the resulting
+     * NullPointerException breaks the whole task page instead of naming the misconfiguration.
+     */
+    private void reportUnresolvableFolder() {
+        log.error("Plugin {}: the configured folder '{}' cannot be resolved", PLUGIN_NAME, configFolder);
+        Helper.setFehlerMeldung("Plugin " + PLUGIN_NAME + ": the configured folder '" + configFolder
+                + "' is unknown to Goobi. Use master, main or media, or add process.folder.images." + configFolder
+                + " to goobi_config.properties.");
+        path = null;
+        uploadedFiles = new ArrayList<>();
+        size = 0;
+    }
+
     public void loadUploadedFiles() {
+        if (path == null) {
+            return;
+        }
         this.uploadedFiles = StorageProvider.getInstance().list(path.toString());
         try {
             this.size = StorageProvider.getInstance().getDirectorySize(path);
@@ -161,6 +184,9 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
      */
     public String getFileSize(String file) {
         String result = "-";
+        if (path == null) {
+            return result;
+        }
         try {
             Path f = resolveSafePath(path, file);
             long fileSize = StorageProvider.getInstance().getFileSize(f);
@@ -202,6 +228,9 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
     }
 
     public void deleteFile() {
+        if (path == null) {
+            return;
+        }
         try {
             Path f = resolveSafePath(path, currentFile);
             StorageProvider.getInstance().deleteFile(f);
@@ -212,6 +241,9 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
     }
 
     public void downloadFile() {
+        if (path == null) {
+            return;
+        }
         try {
             Path f = resolveSafePath(path, currentFile);
             try (InputStream in = StorageProvider.getInstance().newInputStream(f)) {
@@ -231,6 +263,9 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
     }
 
     public void deleteAllFiles() {
+        if (path == null) {
+            return;
+        }
         for (String file : uploadedFiles) {
             try {
                 Path f = resolveSafePath(path, file);
@@ -243,6 +278,9 @@ public class FileUploadPlugin extends AbstractStepPlugin implements IStepPlugin,
     }
 
     public void downloadAllImages() {
+        if (path == null) {
+            return;
+        }
 
         try {
             FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
