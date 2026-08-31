@@ -27,6 +27,7 @@
     xmlns:fn="http://java.sun.com/jsp/jstl/functions"
     xmlns:intranda="http://xmlns.jcp.org/jsf/composite/composites"
     xmlns:jsf="http://xmlns.jcp.org/jsf"
+    xmlns:util="http://goobi.io/util"
     xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
 
     <!-- External CSS -->
@@ -44,7 +45,7 @@
 
             <intranda:boxTitle
                 title="#{msgs.files}"
-                icon="fa-upload">
+                icon="upload">
                 <ul jsf:id="tabControls" class="tabs">
                     <li class="tab #{NavigationForm.uiStatus.image_upload ne 'tab2'?'active':''}"><h:commandLink
                             id="tab1"
@@ -122,7 +123,7 @@
                                         class="btn btn-blank float-end"
                                         jsf:id="absenden"
                                         jsf:action="#{AktuelleSchritteForm.myPlugin.changeFolder}">
-                                        <i class="fa fa-folder-open-o"></i>
+                                        <util:icon icon="folder-open" />
                                         <span>
                                             <h:outputText value="#{msgs.plugin_fileUpload_changeFolder}" />
                                         </span>
@@ -155,7 +156,7 @@
                                     title="#{msgs.deleteAllFiles}"
                                     onclick="if (!confirm('#{msgs.wirklichAusfuehren}')) return false"
                                     jsf:action="#{AktuelleSchritteForm.myPlugin.deleteAllFiles}">
-                                    <i class="fa fa-trash-o"></i>
+                                    <util:icon icon="trash" />
                                     <span>
                                         <h:outputText value="#{msgs.deleteAllFiles}" />
                                     </span>
@@ -166,7 +167,7 @@
                                     class="btn btn-primary float-end"
                                     title="#{msgs.downloadAllFiles}"
                                     jsf:action="#{AktuelleSchritteForm.myPlugin.downloadAllImages}">
-                                    <i class="fa fa-download"></i>
+                                    <util:icon icon="download" />
                                     <span>
                                         <h:outputText value="#{msgs.downloadAllFiles}" />
                                     </span>
@@ -202,7 +203,7 @@
                                             jsf:action="#{AktuelleSchritteForm.myPlugin.downloadFile}"
                                             class="btn btn-blank"
                                             title="#{msgs.downloadFile}">
-                                            <i class="fa fa-download"/>
+                                            <util:icon icon="download" />
                                             <f:setPropertyActionListener
                                                 target="#{AktuelleSchritteForm.myPlugin.currentFile}"
                                                 value="#{file}" />
@@ -212,8 +213,7 @@
                                             jsf:action="#{AktuelleSchritteForm.myPlugin.deleteFile}"
                                             class="btn btn-blank ms-2"
                                             title="#{msgs.deleteFile}">
-                                            <i id="deleteFile_#{file}"
-                                                class="fa fa-trash-o"/>
+                                            <util:icon icon="trash" />
                                             <f:setPropertyActionListener
                                                 target="#{AktuelleSchritteForm.myPlugin.currentFile}"
                                                 value="#{file}" />
@@ -227,6 +227,9 @@
                 </h:panelGroup>
             </div>
         </intranda:box>
+
+        <h:outputScript library="jakarta.faces" name="faces.js" target="head" />
+        <script src="#{HelperForm.applicationWebsiteUrl}resources/js/dist/icons.min.js?v=#{HelperForm.buildVersion}"></script>
 
         <script
                 src="#{HelperForm.applicationWebsiteUrl}dist/#{AktuelleSchritteForm.myPlugin.title}/js/uploader.js"
