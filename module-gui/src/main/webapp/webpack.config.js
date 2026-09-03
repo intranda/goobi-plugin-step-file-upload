@@ -13,7 +13,7 @@ module.exports = {
     module: {
       rules: [
         {
-          test: /\.tag$/,
+          test: /\.riot$/,
           exclude: /node_modules/,
           use: [{
             loader: '@riotjs/webpack-loader',

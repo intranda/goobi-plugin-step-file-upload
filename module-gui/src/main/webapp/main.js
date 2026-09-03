@@ -1,5 +1,9 @@
 import * as riot from 'riot'
-import Uploader from './tags/uploader.tag'
+import Uploader from './tags/uploader.riot'
+
+riot.install((component) => {
+  component.GoobiIcons = window.GoobiIcons;
+});
 
 const mountApp = riot.component(Uploader)
 
